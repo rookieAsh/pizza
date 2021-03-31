@@ -1,7 +1,7 @@
 <template>
   <div class="container">
-    <div class="titleMsg">PIZ质押挖矿</div>
-    <div class="titleNav">存入PIZ获取PIZ</div>
+    <div class="titleMsg">BUSD-PIZ/LP质押挖矿</div>
+    <div class="titleNav">存入USDT-PIZ</div>
     <div class="content">
       <div class="left">
         <div class="box1">{{ number1 }}</div>
@@ -19,8 +19,8 @@
       </div>
     </div>
     <div class="footerBtn3">
-      <button class="button" round @click="harvestAndRedemption">
-        收割并赎回
+      <button class="button" round @click="harvestAndRedemption()">
+        收获并赎回
       </button>
     </div>
     <!-- 弹窗 -->
@@ -28,13 +28,10 @@
       <div class="diaContent">
         <div class="title1">质押</div>
         <div class="title2">{{ number2 }} PIZ可用</div>
+
         <div class="inputMag">
           <div class="pizmsg">PIZ</div>
-          <input
-            class="pizInput"
-            v-model="pizNumber"
-            placeholder="请输入数量"
-          />
+          <input class="pizInput" placeholder="请输入数量" />
         </div>
         <div class="title3">最大值</div>
         <div class="buttonBox">
@@ -53,199 +50,7 @@ export default {
       dialogVisible: false,
       pid: this.$route.query.key,
       abi: this.$store.state.abi,
-      abi1: [
-        {
-          inputs: [
-            { internalType: 'string', name: 'name', type: 'string' },
-            { internalType: 'string', name: 'symbol', type: 'string' },
-            { internalType: 'uint8', name: 'decimals', type: 'uint8' },
-            {
-              internalType: 'uint256',
-              name: 'initialBalance',
-              type: 'uint256',
-            },
-          ],
-          payable: false,
-          stateMutability: 'nonpayable',
-          type: 'constructor',
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: 'address',
-              name: 'owner',
-              type: 'address',
-            },
-            {
-              indexed: true,
-              internalType: 'address',
-              name: 'spender',
-              type: 'address',
-            },
-            {
-              indexed: false,
-              internalType: 'uint256',
-              name: 'value',
-              type: 'uint256',
-            },
-          ],
-          name: 'Approval',
-          type: 'event',
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: 'address',
-              name: 'from',
-              type: 'address',
-            },
-            {
-              indexed: true,
-              internalType: 'address',
-              name: 'to',
-              type: 'address',
-            },
-            {
-              indexed: false,
-              internalType: 'uint256',
-              name: 'value',
-              type: 'uint256',
-            },
-          ],
-          name: 'Transfer',
-          type: 'event',
-        },
-        {
-          constant: true,
-          inputs: [
-            { internalType: 'address', name: 'owner', type: 'address' },
-            { internalType: 'address', name: 'spender', type: 'address' },
-          ],
-          name: 'allowance',
-          outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-          payable: false,
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          constant: false,
-          inputs: [
-            { internalType: 'address', name: 'spender', type: 'address' },
-            { internalType: 'uint256', name: 'amount', type: 'uint256' },
-          ],
-          name: 'approve',
-          outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
-          payable: false,
-          stateMutability: 'nonpayable',
-          type: 'function',
-        },
-        {
-          constant: true,
-          inputs: [
-            { internalType: 'address', name: 'account', type: 'address' },
-          ],
-          name: 'balanceOf',
-          outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-          payable: false,
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          constant: true,
-          inputs: [],
-          name: 'decimals',
-          outputs: [{ internalType: 'uint8', name: '', type: 'uint8' }],
-          payable: false,
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          constant: false,
-          inputs: [
-            { internalType: 'address', name: 'spender', type: 'address' },
-            {
-              internalType: 'uint256',
-              name: 'subtractedValue',
-              type: 'uint256',
-            },
-          ],
-          name: 'decreaseAllowance',
-          outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
-          payable: false,
-          stateMutability: 'nonpayable',
-          type: 'function',
-        },
-        {
-          constant: false,
-          inputs: [
-            { internalType: 'address', name: 'spender', type: 'address' },
-            { internalType: 'uint256', name: 'addedValue', type: 'uint256' },
-          ],
-          name: 'increaseAllowance',
-          outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
-          payable: false,
-          stateMutability: 'nonpayable',
-          type: 'function',
-        },
-        {
-          constant: true,
-          inputs: [],
-          name: 'name',
-          outputs: [{ internalType: 'string', name: '', type: 'string' }],
-          payable: false,
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          constant: true,
-          inputs: [],
-          name: 'symbol',
-          outputs: [{ internalType: 'string', name: '', type: 'string' }],
-          payable: false,
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          constant: true,
-          inputs: [],
-          name: 'totalSupply',
-          outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-          payable: false,
-          stateMutability: 'view',
-          type: 'function',
-        },
-        {
-          constant: false,
-          inputs: [
-            { internalType: 'address', name: 'recipient', type: 'address' },
-            { internalType: 'uint256', name: 'amount', type: 'uint256' },
-          ],
-          name: 'transfer',
-          outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
-          payable: false,
-          stateMutability: 'nonpayable',
-          type: 'function',
-        },
-        {
-          constant: false,
-          inputs: [
-            { internalType: 'address', name: 'sender', type: 'address' },
-            { internalType: 'address', name: 'recipient', type: 'address' },
-            { internalType: 'uint256', name: 'amount', type: 'uint256' },
-          ],
-          name: 'transferFrom',
-          outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
-          payable: false,
-          stateMutability: 'nonpayable',
-          type: 'function',
-        },
-      ], //测试piz地址abi
-      address: '0x10FC9968D9c36a06eB08C5A81B7343431124e337', //合约地址
-      address1: '0x116f88F48DA8da893BC390564d430D918EB0412E', //测试piz地址
+      address: '0x10FC9968D9c36a06eB08C5A81B7343431124e337',
       number1: '',
       number2: '',
       pizNumber: '',
@@ -259,46 +64,14 @@ export default {
     handlePizdig1() {
       this.dialogVisible = true
     },
-    // 授权approve
-    async confimBtn() {
-      const accounts = await ethereum.request({
-        method: 'eth_requestAccounts',
-      })
-      const newAccounts = accounts[0]
-      const contractInstance = new web3.eth.Contract(this.abi1, this.address1)
-      const res = await contractInstance.methods
-        .approve(this.address, this.pizNumber * 1000000)
-        .send({ from: newAccounts })
-        .then((res) => {
-          console.log(res)
-        })
-        .catch((err) => {
-          console.log(err)
-          // this.$message.error('用户拒绝事务签名')
-        })
+    confimBtn() {
+      this.dialogVisible = false
     },
-    // 质押stake
-    async cancelBtn() {
-      const accounts = await ethereum.request({
-        method: 'eth_requestAccounts',
-      })
-      const newAccounts = accounts[0]
-      const contractInstance = new web3.eth.Contract(this.abi, this.address)
-      const res = await contractInstance.methods
-        .stake(this.pizNumber * 1000000, this.pid)
-        .send({ from: newAccounts })
-        .then((res) => {
-          console.log(res)
-        })
-        .catch((err) => {
-          console.log(err)
-          // this.$message.error('用户拒绝事务签名')
-        })
+    cancelBtn() {
+      this.dialogVisible = false
     },
-    // 关闭弹窗
     handleClose() {
       this.dialogVisible = false
-      this.pizNumber = ''
     },
     // 获取
     async getDate() {
@@ -310,12 +83,10 @@ export default {
       const res = await contractInstance.methods
         .reap(this.pid)
         .send({ from: newAccounts })
-        .then((res) => {
-          console.log(res)
-        })
-        .catch((err) => {
-          console.log(err)
-          this.$message.error('用户拒绝事务签名')
+        .then((res, err) => {
+          if (!err) {
+            console.log(res)
+          }
         })
     },
     // 获取数量
@@ -351,12 +122,10 @@ export default {
       const res = await contractInstance.methods
         .exit(this.pid)
         .send({ from: newAccounts })
-        .then((res) => {
-          console.log(res)
-        })
-        .catch((err) => {
-          console.log(err)
-          // this.$message.error('用户拒绝事务签名')
+        .then((res, err) => {
+          if (!err) {
+            console.log(res)
+          }
         })
     },
   },
@@ -526,7 +295,7 @@ export default {
         width: 370px;
         height: 77px;
         padding-left: 25px;
-        font-size: 20px;
+        font-size: 18px;
         border-radius: 20px;
         font-family: PingFang-SC-Regular, PingFang-SC;
         font-weight: 400;

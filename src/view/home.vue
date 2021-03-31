@@ -74,12 +74,27 @@
             <div class="languageBtn">
               <el-dropdown trigger="click" @command="handleCommand">
                 <span class="el-dropdown-link" v-if="$i18n.locale === 'zh'">
-                  <img src="../assets/image/home/china.png" alt="" />CN<i
+                  <img src="../assets/image/home/china.png" alt="" />中文<i
                     class="el-icon-arrow-down el-icon--right"
                   ></i>
                 </span>
                 <span class="el-dropdown-link" v-if="$i18n.locale === 'en'">
-                  <img src="../assets/image/home/en.svg" alt="" />EN<i
+                  <img src="../assets/image/home/en.svg" alt="" />English<i
+                    class="el-icon-arrow-down el-icon--right"
+                  ></i>
+                </span>
+                <span class="el-dropdown-link" v-if="$i18n.locale === 'ru'">
+                  <img src="../assets/image/home/russia.png" alt="" />русск<i
+                    class="el-icon-arrow-down el-icon--right"
+                  ></i>
+                </span>
+                <span class="el-dropdown-link" v-if="$i18n.locale === 'jap'">
+                  <img src="../assets/image/home/japan.png" alt="" />日本語<i
+                    class="el-icon-arrow-down el-icon--right"
+                  ></i>
+                </span>
+                <span class="el-dropdown-link" v-if="$i18n.locale === 'sk'">
+                  <img src="../assets/image/home/sk.png" alt="" />한국어<i
                     class="el-icon-arrow-down el-icon--right"
                   ></i>
                 </span>
@@ -88,16 +103,37 @@
                     <img
                       src="../assets/image/home/china.png"
                       alt=""
-                    />CN</el-dropdown-item
+                    />中文</el-dropdown-item
                   >
                   <el-dropdown-item command="en">
                     <img src="../assets/image/home/en.svg" alt="" />
-                    EN</el-dropdown-item
+                    English</el-dropdown-item
+                  >
+                  <el-dropdown-item command="ru">
+                    <img src="../assets/image/home/russia.png" alt="" />
+                    русск</el-dropdown-item
+                  >
+                  <el-dropdown-item command="jap">
+                    <img src="../assets/image/home/japan.png" alt="" />
+                    日本語</el-dropdown-item
+                  >
+                  <el-dropdown-item command="sk">
+                    <img src="../assets/image/home/sk.png" alt="" />
+                    한국어</el-dropdown-item
                   >
                 </el-dropdown-menu>
               </el-dropdown>
             </div>
-            <button class="moneyBtn" @click="connectWallet()">连接钱包</button>
+            <button class="moneyBtn" v-if="address != ''">
+              <span> {{ address }}</span>
+            </button>
+            <button
+              class="moneyBtn"
+              @click="hendleWalletBtn()"
+              v-if="address == ''"
+            >
+              <span> 连接地址 </span>
+            </button>
           </div>
         </div>
       </el-header>
@@ -123,7 +159,7 @@
           </div>
           <div class="headerRight">
             <div class="languageBtn">
-              <el-dropdown trigger="click" @command="handleCommand">
+              <!-- <el-dropdown trigger="click" @command="handleCommand">
                 <span class="el-dropdown-link" v-if="$i18n.locale === 'zh'">
                   <img src="../assets/image/home/china.png" alt="" />CN<i
                     class="el-icon-arrow-down el-icon--right"
@@ -147,9 +183,65 @@
                     EN</el-dropdown-item
                   >
                 </el-dropdown-menu>
+              </el-dropdown> -->
+              <el-dropdown trigger="click" @command="handleCommand">
+                <span class="el-dropdown-link" v-if="$i18n.locale === 'zh'">
+                  <img src="../assets/image/home/china.png" alt="" />中文<i
+                    class="el-icon-arrow-down el-icon--right"
+                  ></i>
+                </span>
+                <span class="el-dropdown-link" v-if="$i18n.locale === 'en'">
+                  <img src="../assets/image/home/en.svg" alt="" />English<i
+                    class="el-icon-arrow-down el-icon--right"
+                  ></i>
+                </span>
+                <span class="el-dropdown-link" v-if="$i18n.locale === 'ru'">
+                  <img src="../assets/image/home/russia.png" alt="" />русск<i
+                    class="el-icon-arrow-down el-icon--right"
+                  ></i>
+                </span>
+                <span class="el-dropdown-link" v-if="$i18n.locale === 'jap'">
+                  <img src="../assets/image/home/japan.png" alt="" />日本語<i
+                    class="el-icon-arrow-down el-icon--right"
+                  ></i>
+                </span>
+                <span class="el-dropdown-link" v-if="$i18n.locale === 'sk'">
+                  <img src="../assets/image/home/sk.png" alt="" />한국어<i
+                    class="el-icon-arrow-down el-icon--right"
+                  ></i>
+                </span>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item command="zh">
+                    <img
+                      src="../assets/image/home/china.png"
+                      alt=""
+                    />中文</el-dropdown-item
+                  >
+                  <el-dropdown-item command="en">
+                    <img src="../assets/image/home/en.svg" alt="" />
+                    English</el-dropdown-item
+                  >
+                  <el-dropdown-item command="ru">
+                    <img src="../assets/image/home/russia.png" alt="" />
+                    русск</el-dropdown-item
+                  >
+                  <el-dropdown-item command="jap">
+                    <img src="../assets/image/home/japan.png" alt="" />
+                    日本語</el-dropdown-item
+                  >
+                  <el-dropdown-item command="sk">
+                    <img src="../assets/image/home/sk.png" alt="" />
+                    한국어</el-dropdown-item
+                  >
+                </el-dropdown-menu>
               </el-dropdown>
             </div>
-            <button class="moneyBtn">连接钱包</button>
+            <button class="moneyBtn" v-if="address">
+              <span> {{ address }}</span>
+            </button>
+            <button class="moneyBtn" @click="hendleWallet()" v-if="!address">
+              <span> 连接钱包</span>
+            </button>
           </div>
         </div>
       </el-header>
@@ -220,9 +312,11 @@ import img1 from '../assets/image/home/img1.png'
 import img2 from '../assets/image/home/img2.png'
 import img3 from '../assets/image/home/img3.png'
 import img4 from '../assets/image/home/img4.png'
+import { mapActions } from 'vuex'
 export default {
   data() {
     return {
+      address: '',
       show: false,
       drawer: false,
       direction: 'ltr',
@@ -235,7 +329,7 @@ export default {
           path: 'family',
           key: 1,
           icon: img1,
-          children: []
+          children: [],
         },
         {
           authName: '贸易',
@@ -248,15 +342,15 @@ export default {
               authName: '兑换',
               id: 'trading',
               path: 'trading',
-              key: 31
+              key: 31,
             },
             {
               authName: '流动性',
               id: 'liquidity',
               path: 'liquidity',
-              key: 32
-            }
-          ]
+              key: 32,
+            },
+          ],
         },
         {
           authName: '农场',
@@ -264,7 +358,7 @@ export default {
           path: 'farm',
           icon: img3,
           key: 4,
-          children: []
+          children: [],
         },
         {
           authName: '城堡',
@@ -272,15 +366,17 @@ export default {
           path: 'castle',
           icon: img4,
           key: 5,
-          children: []
-        }
-      ]
+          children: [],
+        },
+      ],
     }
   },
   created() {
     this.$store.commit('instance')
+    this.hendleWalletBtn()
   },
   methods: {
+    ...mapActions(['hendleWallet']),
     isCollapseClick() {
       this.isCollapse = !this.isCollapse
     },
@@ -289,17 +385,17 @@ export default {
     },
     handleCommand(command) {
       this.$i18n.locale = command
-      console.log(this.$i18n.locale)
     },
-
-    connectWallet() {
-      this.wallet = web3.eth.accounts.wallet
-      console.log(this.wallet.defaultKeyName)
-      web3.eth.getProtocolVersion().then(res => {
-        console.log(res)
-      })
-    }
-  }
+    async hendleWalletBtn() {
+      if (typeof window.ethereum !== 'undefined') {
+        console.log('MetaMask is installed!')
+      }
+      const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
+      console.log(accounts)
+      this.addressAll = accounts[0]
+      this.address = accounts[0].slice(0, 8) + '...'
+    },
+  },
 }
 </script>
 <style lang="scss">
@@ -400,13 +496,14 @@ export default {
         display: flex;
         flex-direction: row;
         .languageBtn {
-          width: 100px;
           height: 40px;
           line-height: 40px;
+          margin-right: 10px;
           .el-dropdown-selfdefine {
             cursor: pointer;
             display: flex;
-            justify-content: center;
+            flex-direction: row;
+            justify-content: start;
             align-items: center;
             font-size: 16px;
             font-family: PingFangSC-Medium, PingFang SC;
@@ -440,7 +537,7 @@ export default {
 .el-dropdown-menu {
   .el-dropdown-menu__item {
     display: flex;
-    justify-content: center;
+    justify-content: start;
     align-items: center;
     font-size: 16px;
     font-family: PingFangSC-Medium, PingFang SC;
@@ -470,10 +567,6 @@ export default {
     .headerRight {
       .languageBtn {
         .el-dropdown-selfdefine {
-          cursor: pointer;
-          display: flex;
-          justify-content: center;
-          align-items: center;
           font-size: 13px;
           font-weight: 500;
           color: #333333;
@@ -489,9 +582,11 @@ export default {
   .el-dropdown-menu {
     .el-dropdown-menu__item {
       display: flex;
-      justify-content: center;
+      justify-content: start;
       align-items: center;
+      height: 28px;
       font-size: 13px;
+      padding: 0 8px;
       font-family: PingFangSC-Medium, PingFang SC;
       font-weight: 500;
       color: #333333;

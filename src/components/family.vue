@@ -4,8 +4,8 @@
       <div class="left">
         <!-- <div class="title">{{ 9527 }}</div>
         <div class="spanMsg">这是什么</div> -->
-        <div class="title">{{ $t("lang.name") }}</div>
-        <div class="spanMsg">{{ $t("lang.message") }}</div>
+        <div class="title">{{ $t('lang.name') }}</div>
+        <div class="spanMsg">{{ $t('lang.message') }}</div>
         <div class="rightPhone">
           <img src="../assets/image/home/bigLogo.png" alt="" />
         </div>
@@ -45,17 +45,20 @@
 export default {
   data() {
     return {
-      title: "APP介绍APP介绍介绍"
-    };
+      title: 'APP介绍APP介绍介绍',
+    }
   },
   created() {},
-  methods: {}
-};
+  methods: {},
+}
 </script>
 
 <style lang="scss" scoped>
 .container {
   width: 100%;
+  .content {
+    margin-top: 80px;
+  }
 }
 .content {
   display: flex;
@@ -67,7 +70,7 @@ export default {
     .title {
       width: 382px;
       height: 134px;
-      margin-top: 132px;
+      margin-top: 110px;
       margin-bottom: 30px;
       font-size: 48px;
       font-family: PingFang-SC-Bold, PingFang-SC;
@@ -134,8 +137,8 @@ export default {
   }
   .right {
     width: 780px;
-    height: 884px;
-    margin-top: 20px;
+    // height: 884px;
+    // margin-top: 20px;
   }
 }
 @media screen and (min-width: 767px) {

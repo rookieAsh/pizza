@@ -31,11 +31,21 @@
             </div>
             <div class="box3">
               <div class="max">MAX</div>
-              <div class="bnb" @click="handleBabBtn()">
+              <div class="bnb" @click="handleBabBtn(11)">
                 <div class="box4">
-                  <img src="../assets/image/tradLIqui/img3.png" alt="" /><span
+                  <!-- <img src="../assets/image/tradLIqui/img3.png" alt="" /><span
                     >BAB</span
-                  >
+                  > -->
+                  <img
+                    v-if="chooseVal == 1"
+                    src="../assets/image/home/china.png"
+                    alt=""
+                  /><span v-if="chooseVal == 1">BAB</span>
+                  <img
+                    v-if="chooseVal == 2"
+                    src="../assets/image/home/en.svg"
+                    alt=""
+                  /><span v-if="chooseVal == 2">BAB</span>
                 </div>
                 <!-- <div class="box5"></div> -->
                 <div class="box6">
@@ -59,7 +69,7 @@
             <div class="box2_1">
               <input class="box2InputTo" placeholder="..." />
             </div>
-            <div class="box3">
+            <div class="box3" @click="handleChooseBtn(22)">
               <div class="box3_1">选择一种货币</div>
               <div class="box3_2">
                 <img src="../assets/image/tradLIqui/img5.png" alt="" />
@@ -139,14 +149,12 @@
             <div class="box2">图</div>
           </div>
           <div class="tokenAll">
-            <div>
+            <div @click="choose1(1)">
               <img src="../assets/image/home/china.png" alt="" />
               <span>BAB</span>
             </div>
-            <div>
-              <img src="../assets/image/home/china.png" alt="" /> B<span
-                >BAB</span
-              >
+            <div @click="choose2(2)">
+              <img src="../assets/image/home/en.svg" alt="" /><span>BAB</span>
             </div>
             <div>
               <img src="../assets/image/home/china.png" alt="" />
@@ -218,6 +226,8 @@ export default {
       num: '',
       bnbDialog: false,
       setBtnDialog: false,
+      tokenVal: '',
+      chooseVal: 1,
     }
   },
   created() {},
@@ -245,8 +255,23 @@ export default {
     handleCloseBnb() {
       this.bnbDialog = false
     },
-    handleBabBtn() {
+    handleBabBtn(val) {
       this.bnbDialog = true
+      this.tokenVal = val
+      console.log(this.tokenVal)
+    },
+    handleChooseBtn(val) {
+      this.bnbDialog = true
+      this.tokenVal = val
+      console.log(this.tokenVal)
+    },
+    choose1(val) {
+      this.chooseVal = val
+      this.bnbDialog = false
+    },
+    choose2(val) {
+      this.chooseVal = val
+      this.bnbDialog = false
     },
   },
 }
@@ -400,14 +425,13 @@ export default {
             border-radius: 8px;
             color: #ffffff;
             margin-left: 5px;
-            // .box5 {
-            //   margin: 0 10px;
-            // }
             .box4 {
-              height: 32px;
-              line-height: 29px;
+              display: flex;
+              flex-direction: row;
+              align-items: center;
               img {
-                vertical-align: middle;
+                width: 24px;
+                height: 20px;
               }
               span {
                 margin: 0 10px;
@@ -666,10 +690,16 @@ export default {
         font-weight: bold;
         color: #4c4c4c;
         padding: 0 13px;
+        div:hover {
+          cursor: pointer;
+        }
         div {
           display: flex;
           height: 60px;
-          line-height: 32px;
+          margin: 10px 0;
+          flex-direction: row;
+          align-items: center;
+          justify-content: start;
           img {
             width: 30px;
             height: 30px;
@@ -770,21 +800,14 @@ export default {
             .bnb {
               width: 73px;
               height: 21px;
-              line-height: 22px;
-              font-size: 11px;
-              // .box5 {
-              //   margin: 0 5px;
-              // }
+              font-size: 12px;
               .box4 {
-                height: 16px;
-                line-height: 21px;
                 img {
-                  height: 15px;
-                  width: 14px;
-                  vertical-align: middle;
+                  height: 13px;
+                  width: 15px;
                 }
                 span {
-                  margin: 0 5px;
+                  margin: 2px 5px 0 5px;
                 }
               }
               .box6 {

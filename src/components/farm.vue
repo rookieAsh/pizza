@@ -16,7 +16,7 @@
             <div>获取PIZ</div>
           </div>
           <div>
-            <button @click="handlePizdig()">选择</button>
+            <button @click="handlePizdig(0)">选择</button>
           </div>
         </div>
         <div class="submenu">
@@ -29,7 +29,7 @@
             <div>获取PIZ</div>
           </div>
           <div>
-            <button>选择</button>
+            <button @click="handlePizdig1(1)">选择</button>
           </div>
         </div>
         <div class="submenu">
@@ -42,7 +42,7 @@
             <div>获取PIZ</div>
           </div>
           <div>
-            <button>选择</button>
+            <button @click="handlePizdig2(2)">选择</button>
           </div>
         </div>
         <div class="submenu">
@@ -55,7 +55,7 @@
             <div>获取PIZ</div>
           </div>
           <div>
-            <button>选择</button>
+            <button @click="handlePizdig3(3)">选择</button>
           </div>
         </div>
       </div>
@@ -67,15 +67,247 @@
 export default {
   data() {
     return {
-      dialogVisible: false
+      dialogVisible: false,
     }
   },
-  created() {},
+  created() {
+    this.$store.commit('instance')
+  },
   methods: {
-    handlePizdig() {
-      this.$router.push('/pizdig')
-    }
-  }
+    handlePizdig(pid) {
+      // this.$router.push({path: ' 路由 ', query: {key: value}})
+      // this.$router.push('/pizdig')
+      this.$router.push({ path: 'pizdig', query: { key: pid } })
+    },
+    handlePizdig1(pid) {
+      this.$router.push({ path: 'pizdig1', query: { key: pid } })
+    },
+    handlePizdig2(pid) {
+      this.$router.push({ path: 'pizdig2', query: { key: pid } })
+    },
+    handlePizdig3(pid) {
+      this.$router.push({ path: 'pizdig3', query: { key: pid } })
+    },
+    async instances() {
+      const abi = [
+        {
+          entrys: [
+            {
+              inputs: [{ name: '_pipe', type: 'address' }],
+              stateMutability: 'Nonpayable',
+              type: 'Constructor',
+            },
+            {
+              inputs: [
+                { indexed: true, name: 'previousOwner', type: 'address' },
+                { indexed: true, name: 'newOwner', type: 'address' },
+              ],
+              name: 'OwnershipTransferred',
+              type: 'Event',
+            },
+            {
+              inputs: [
+                { name: '_rewardRate', type: 'uint256' },
+                { name: '_lpToken', type: 'address' },
+              ],
+              name: 'add',
+              stateMutability: 'Nonpayable',
+              type: 'Function',
+            },
+            {
+              name: 'claimOwnership',
+              stateMutability: 'Nonpayable',
+              type: 'Function',
+            },
+            {
+              outputs: [{ type: 'uint256' }],
+              constant: true,
+              inputs: [
+                { name: 'account', type: 'address' },
+                { name: 'pid', type: 'uint256' },
+              ],
+              name: 'earned',
+              stateMutability: 'View',
+              type: 'Function',
+            },
+            {
+              inputs: [{ name: 'pid', type: 'uint256' }],
+              name: 'exit',
+              stateMutability: 'Nonpayable',
+              type: 'Function',
+            },
+            {
+              outputs: [{ type: 'uint256' }],
+              constant: true,
+              name: 'finsishtime',
+              stateMutability: 'View',
+              type: 'Function',
+            },
+            {
+              outputs: [{ type: 'bool' }],
+              constant: true,
+              inputs: [{ name: 'uaddress', type: 'address' }],
+              name: 'isUserExists',
+              stateMutability: 'View',
+              type: 'Function',
+            },
+            {
+              outputs: [{ type: 'address' }],
+              constant: true,
+              name: 'owner',
+              stateMutability: 'View',
+              type: 'Function',
+            },
+            {
+              outputs: [{ type: 'address' }],
+              constant: true,
+              name: 'pendingOwner',
+              stateMutability: 'View',
+              type: 'Function',
+            },
+            {
+              outputs: [{ type: 'uint256' }],
+              constant: true,
+              name: 'periodFinish',
+              stateMutability: 'View',
+              type: 'Function',
+            },
+            {
+              outputs: [{ type: 'address' }],
+              constant: true,
+              name: 'pipe',
+              stateMutability: 'View',
+              type: 'Function',
+            },
+            {
+              outputs: [
+                { name: 'lpToken', type: 'address' },
+                { name: 'rewardRate', type: 'uint256' },
+                { name: 'updateTime', type: 'uint256' },
+                { name: 'perTokenStored', type: 'uint256' },
+              ],
+              constant: true,
+              inputs: [{ type: 'uint256' }],
+              name: 'poolInfo',
+              stateMutability: 'View',
+              type: 'Function',
+            },
+            {
+              outputs: [{ type: 'uint256' }],
+              constant: true,
+              name: 'poolLength',
+              stateMutability: 'View',
+              type: 'Function',
+            },
+            {
+              outputs: [{ type: 'uint256' }],
+              inputs: [{ name: 'pid', type: 'uint256' }],
+              name: 'reap',
+              stateMutability: 'Nonpayable',
+              type: 'Function',
+            },
+            {
+              inputs: [{ name: 'raddress', type: 'address' }],
+              name: 'register',
+              stateMutability: 'Nonpayable',
+              type: 'Function',
+            },
+            {
+              outputs: [{ type: 'uint256' }],
+              constant: true,
+              inputs: [{ name: 'pid', type: 'uint256' }],
+              name: 'rewardPerToken',
+              stateMutability: 'View',
+              type: 'Function',
+            },
+            {
+              inputs: [
+                { name: '_pid', type: 'uint256' },
+                { name: '_rewardRate', type: 'uint256' },
+              ],
+              name: 'set',
+              stateMutability: 'Nonpayable',
+              type: 'Function',
+            },
+            {
+              inputs: [
+                { name: 'amount', type: 'uint256' },
+                { name: 'pid', type: 'uint256' },
+              ],
+              name: 'stake',
+              stateMutability: 'Nonpayable',
+              type: 'Function',
+            },
+            {
+              outputs: [
+                { name: 'amount', type: 'uint256' },
+                { name: 'yieldRate', type: 'uint256' },
+                { name: 'reward', type: 'uint256' },
+              ],
+              constant: true,
+              inputs: [{ type: 'uint256' }, { type: 'address' }],
+              name: 'stakeInfos',
+              stateMutability: 'View',
+              type: 'Function',
+            },
+            {
+              inputs: [
+                { name: 'newOwner', type: 'address' },
+                { name: 'direct', type: 'bool' },
+                { name: 'renounce', type: 'bool' },
+              ],
+              name: 'transferOwnership',
+              stateMutability: 'Nonpayable',
+              type: 'Function',
+            },
+            {
+              outputs: [{ type: 'address' }],
+              constant: true,
+              inputs: [{ type: 'uint256' }],
+              name: 'uids',
+              stateMutability: 'View',
+              type: 'Function',
+            },
+            {
+              outputs: [{ type: 'uint256' }],
+              constant: true,
+              name: 'userCounter',
+              stateMutability: 'View',
+              type: 'Function',
+            },
+            {
+              outputs: [
+                { name: 'id', type: 'uint256' },
+                { name: 'teamMass', type: 'uint256' },
+                { name: 'referrals', type: 'uint256' },
+                { name: 'teamMax', type: 'uint256' },
+                { name: 'partners', type: 'uint256' },
+                { name: 'referer', type: 'address' },
+              ],
+              constant: true,
+              inputs: [{ type: 'address' }],
+              name: 'users',
+              stateMutability: 'View',
+              type: 'Function',
+            },
+            {
+              inputs: [
+                { name: 'amount', type: 'uint256' },
+                { name: 'pid', type: 'uint256' },
+              ],
+              name: 'withdraw',
+              stateMutability: 'Nonpayable',
+              type: 'Function',
+            },
+          ],
+        },
+      ]
+      const contract = web3.eth.contract(abi)
+      this.myContract = contract.at(
+        '0x8F5715B7e6F00282a49e309D0fFf27DcdE4c6ca0'
+      )
+    },
+  },
 }
 </script>
 
@@ -369,7 +601,6 @@ export default {
         }
       }
     }
-    
   }
 }
 // }
