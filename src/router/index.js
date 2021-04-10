@@ -13,6 +13,7 @@ import pizdig from '../components/pizdig.vue'
 import pizdig1 from '../components/pizdig1.vue'
 import pizdig2 from '../components/pizdig2.vue'
 import pizdig3 from '../components/pizdig3.vue'
+import invite from '../components/invite.vue'
 
 Vue.use(VueRouter)
 

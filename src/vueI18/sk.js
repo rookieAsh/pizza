@@ -1,5 +1,4 @@
-
 export const lang = {
-  name: '좁쌀.',
-  message: '이것은 좁쌀이다',
+  name: '피자! 피자!',
+  message: '이건 피자입니다.',
 }

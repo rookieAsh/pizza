@@ -1,237 +1,56 @@
 <template>
   <div class="container">
-    <div class="content">
-      <div class="tabs">
-        <div class="trading">兑换</div>
-        <div class="liquidity" @click="toGo2()">流动性</div>
-      </div>
-      <div class="main">
-        <div class="handerTag">
-          <div class="handerLeft">
-            <span>兑换</span>
-            <span>即时交易代币</span>
-          </div>
-          <div class="handerRigth">
-            <div @click="tradingSetBtn()">
-              <img src="../assets/image/tradLIqui/set.png" alt="" />
-            </div>
-            <div>
-              <img src="../assets/image/tradLIqui/time.png" alt="" />
-            </div>
-          </div>
-        </div>
-        <div class="mainForm1">
-          <div class="box1">
-            <div box1_1>从</div>
-            <div box1_2>余额：0</div>
-          </div>
-          <div class="box2">
-            <div class="box2_1">
-              <input class="box2InputFrom" placeholder="..." />
-            </div>
-            <div class="box3">
-              <div class="max">MAX</div>
-              <div class="bnb" @click="handleBabBtn(11)">
-                <div class="box4">
-                  <!-- <img src="../assets/image/tradLIqui/img3.png" alt="" /><span
-                    >BAB</span
-                  > -->
-                  <img
-                    v-if="chooseVal == 1"
-                    src="../assets/image/home/china.png"
-                    alt=""
-                  /><span v-if="chooseVal == 1">BAB</span>
-                  <img
-                    v-if="chooseVal == 2"
-                    src="../assets/image/home/en.svg"
-                    alt=""
-                  /><span v-if="chooseVal == 2">BAB</span>
-                </div>
-                <!-- <div class="box5"></div> -->
-                <div class="box6">
-                  <img src="../assets/image/tradLIqui/img2.png" alt="" />
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="bottomBtn">
-          <div class="bottomBtn2">
-            <img src="../assets/image/home/down.png" alt="" />
-          </div>
-        </div>
-        <div class="mainForm2">
-          <div class="box1">
-            <div>至</div>
-            <div>--</div>
-          </div>
-          <div class="box2">
-            <div class="box2_1">
-              <input class="box2InputTo" placeholder="..." />
-            </div>
-            <div class="box3" @click="handleChooseBtn(22)">
-              <div class="box3_1">选择一种货币</div>
-              <div class="box3_2">
-                <img src="../assets/image/tradLIqui/img5.png" alt="" />
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="poor">
-          <div>滑移公差</div>
-          <div>0.5%</div>
-        </div>
-        <div class="footerBtn">
-          <button @click="click11">兑换</button>
-        </div>
-      </div>
-      <!-- 设置图标按钮 -->
-      <el-dialog
-        title="设定值"
-        :visible.sync="setBtnDialog"
-        :before-close="setBtnClose"
-      >
-        <div class="dialogContent">
-          <div class="box1">
-            滑动公差
-            <el-tooltip
-              class="item"
-              effect="light"
-              content="如果价格的不利变化超过此百分比，您的交易将恢复。"
-              placement="right"
-            >
-              <img src="../assets/image/tradLIqui/img1.png" alt="" />
-            </el-tooltip>
-          </div>
-          <div class="box2">
-            <div class="box2_1">0.1%</div>
-            <div class="box2_1">0.5%</div>
-            <div class="box2_1">1.0%</div>
-            <div class="box2_2"><input v-model="input" /><span>%</span></div>
-          </div>
-          <div class="box3">
-            交易截止日期
-            <el-tooltip
-              class="item"
-              effect="light"
-              content="如果您的交易待处理的时间超过此时间，则它将还原。"
-              placement="right"
-            >
-              <img src="../assets/image/tradLIqui/img1.png" alt="" />
-            </el-tooltip>
-          </div>
-          <div class="box4">
-            <!-- <el-input-number
-                v-model="num"
-                controls-position="right"
-                @change="handleChange"
-                :min="0"
-              ></el-input-number> -->
-            <input v-model="input1" />
-            分钟
-          </div>
-        </div>
-      </el-dialog>
-      <!-- BNB按钮 -->
-      <el-dialog :visible.sync="bnbDialog" :before-close="handleCloseBnb">
-        <div class="dialogMain">
-          <div class="tokenDialogContent">
-            <div class="box1">
-              选择一个令牌
-              <img src="../assets/image/tradLIqui/img1.png" alt="" />
-            </div>
-            <div class="box2">
-              <input type="text" placeholder="搜索名称或粘贴地址" />
-            </div>
-          </div>
-          <div class="tokenName">
-            <div class="box1">代币名称</div>
-            <div class="box2">图</div>
-          </div>
-          <div class="tokenAll">
-            <div @click="choose1(1)">
-              <img src="../assets/image/home/china.png" alt="" />
-              <span>BAB</span>
-            </div>
-            <div @click="choose2(2)">
-              <img src="../assets/image/home/en.svg" alt="" /><span>BAB</span>
-            </div>
-            <div>
-              <img src="../assets/image/home/china.png" alt="" />
-              <span>BAB</span>
-            </div>
-            <div>
-              <img src="../assets/image/home/china.png" alt="" />
-              <span>BAB</span>
-            </div>
-            <div>
-              <img src="../assets/image/home/china.png" alt="" />
-              <span>BAB</span>
-            </div>
-            <div>
-              <img src="../assets/image/home/china.png" alt="" />
-              <span>BAB</span>
-            </div>
-            <div>
-              <img src="../assets/image/home/china.png" alt="" />
-              <span>BAB</span>
-            </div>
-            <div>
-              <img src="../assets/image/home/china.png" alt="" />
-              <span>BAB</span>
-            </div>
-            <div>
-              <img src="../assets/image/home/china.png" alt="" />
-              <span>BAB</span>
-            </div>
-            <div>
-              <img src="../assets/image/home/china.png" alt="" />
-              <span>BAB</span>
-            </div>
-            <div>
-              <img src="../assets/image/home/china.png" alt="" />
-              <span>BAB</span>
-            </div>
-            <div>
-              <img src="../assets/image/home/china.png" alt="" />
-              <span>BAB</span>
-            </div>
-            <div>
-              <img src="../assets/image/home/china.png" alt="" />
-              <span>BAB</span>
-            </div>
-            <div>
-              <img src="../assets/image/home/china.png" alt="" />
-              <span>BAB</span>
-            </div>
-            <div>
-              <img src="../assets/image/home/china.png" alt="" />
-              <span>BAB</span>
-            </div>
-          </div>
-        </div>
-      </el-dialog>
+    <div class="iframeBox">
+      <iframe
+        src="http://192.168.2.5:3001/#/swap"
+        id="mobsf"
+        scrolling="no"
+        frameborder="0"
+        style="position: absolute"
+      ></iframe>
+
+      <!-- <iframe
+        style="width: 100%; height: 800px"
+        id="tempHtml"
+        ref="tempHtml"
+        frameborder="0"
+      ></iframe> -->
     </div>
   </div>
 </template>
 
 <script>
+// document.getElementById(
+//   'tempHtml'
+// ).contentDocument.documentElement.innerHTML = this.ifeData
 // import dialog from './dialog.vue'
 export default {
   // components: { dialog },
   data() {
     return {
+      ifeData: require('../../src/build/index.html'),
       input: '',
       input1: '',
       num: '',
       bnbDialog: false,
+      chooseCionDialog: false,
       setBtnDialog: false,
-      tokenVal: '',
       chooseVal: 1,
+      chooseValCion: 0,
     }
   },
-  created() {},
+  created() {
+    window.onresize = () => this.changeMobsfIframe()
+  },
   methods: {
+    changeMobsfIframe() {
+      const mobsf = document.getElementById('mobsf')
+      const deviceWidth = document.body.clientWidth
+      const deviceHeight = document.body.clientHeight
+      mobsf.style.width = Number(deviceWidth) - 240 + 'px' //数字是页面布局宽度差值
+      mobsf.style.height = Number(deviceHeight) - 64 + 'px' //数字是页面布局高度差
+    },
+
     click11() {
       console.log(31231312312)
     },
@@ -246,7 +65,9 @@ export default {
       this.input = ''
       this.input1 = ''
     },
-
+    handleCloseChoose() {
+      this.chooseCionDialog = false
+    },
     // 交易截止日期
     handleChange() {
       console.log(11)
@@ -255,15 +76,13 @@ export default {
     handleCloseBnb() {
       this.bnbDialog = false
     },
-    handleBabBtn(val) {
+    // 选择货币
+    handleBabBtn() {
       this.bnbDialog = true
-      this.tokenVal = val
-      console.log(this.tokenVal)
     },
-    handleChooseBtn(val) {
-      this.bnbDialog = true
-      this.tokenVal = val
-      console.log(this.tokenVal)
+    // 选择货币按钮
+    handleChooseBtn() {
+      this.chooseCionDialog = true
     },
     choose1(val) {
       this.chooseVal = val
@@ -273,6 +92,32 @@ export default {
       this.chooseVal = val
       this.bnbDialog = false
     },
+    choose3(val) {
+      this.chooseVal = val
+      this.bnbDialog = false
+    },
+    choose4(val) {
+      this.chooseVal = val
+      this.bnbDialog = false
+    },
+    //  选择货币
+    chooseCoin1(val) {
+      console.log(val)
+      this.chooseValCion = val
+      this.chooseCionDialog = false
+    },
+    chooseCoin2(val) {
+      this.chooseValCion = val
+      this.chooseCionDialog = false
+    },
+    chooseCoin3(val) {
+      this.chooseValCion = val
+      this.chooseCionDialog = false
+    },
+    chooseCoin4(val) {
+      this.chooseValCion = val
+      this.chooseCionDialog = false
+    },
   },
 }
 </script>
@@ -280,6 +125,12 @@ export default {
 <style lang="scss">
 .container {
   width: 100%;
+  .iframeBox {
+    iframe {
+      width: 88%;
+      height: 90%;
+    }
+  }
   .content {
     width: 100%;
     margin: auto;
@@ -382,7 +233,7 @@ export default {
               font-size: 30px;
               font-weight: 600;
               color: #1ec7d5;
-              background-color: #fff6ea;
+              background-color: #fff;
               border: none;
               outline: none;
             }
@@ -437,7 +288,6 @@ export default {
                 margin: 0 10px;
               }
             }
-
             .box6 {
               height: 32px;
               line-height: 28px;
@@ -486,28 +336,57 @@ export default {
               font-size: 30px;
               font-weight: 600;
               color: #1ec7d5;
-              background-color: #fff6ea;
+              background-color: #fff;
               border: none;
               outline: none;
             }
           }
           .box3 {
-            display: flex;
-            flex-direction: row;
-            justify-content: center;
-            align-items: center;
-            .box3_1 {
-              margin-left: 8px;
-              font-size: 16px;
-              font-family: PingFangSC-Medium, PingFang SC;
-              font-weight: 600;
-              color: #666666;
+            .chooseBox3 {
+              display: flex;
+              flex-direction: row;
+              justify-content: center;
+              align-items: center;
+              .box3_1 {
+                margin-left: 8px;
+                font-size: 16px;
+                font-family: PingFangSC-Medium, PingFang SC;
+                font-weight: 600;
+                color: #666666;
+              }
+              .box3_2 {
+                margin-left: 10px;
+                height: 20px;
+                line-height: 26px;
+                cursor: pointer;
+              }
             }
-            .box3_2 {
-              margin-left: 10px;
-              height: 20px;
-              line-height: 26px;
-              cursor: pointer;
+            .coinNameAndImg {
+              display: flex;
+              flex-direction: row;
+              justify-content: center;
+              align-items: center;
+              width: 115px;
+              height: 32px;
+              line-height: 32px;
+              text-align: center;
+              border-radius: 8px;
+              font-size: 16px;
+              font-weight: 600;
+              background: #1ec7d5;
+              border-radius: 8px;
+              color: #ffffff;
+              .img1 {
+                width: 23px;
+                height: 20px;
+              }
+              span {
+                margin: 0 10px;
+              }
+              .img2 {
+                width: 15px;
+                height: 15px;
+              }
             }
           }
         }
@@ -696,10 +575,9 @@ export default {
         div {
           display: flex;
           height: 60px;
-          margin: 10px 0;
           flex-direction: row;
           align-items: center;
-          justify-content: start;
+          justify-content: flex-start;
           img {
             width: 30px;
             height: 30px;
@@ -725,6 +603,12 @@ export default {
 
 @media screen and (max-width: 767px) {
   .container {
+    .iframeBox {
+      iframe {
+        width: 100%;
+        height: 90%;
+      }
+    }
     .content {
       margin: 40px 0 0 0;
       .tabs {
@@ -757,7 +641,6 @@ export default {
           }
         }
       }
-
       .el-dialog__body {
         padding: 10px 20px 20px 20px;
       }
@@ -789,6 +672,7 @@ export default {
             .box2_1 {
               .box2InputFrom {
                 width: 110px;
+                height: 27px;
                 font-size: 20px;
               }
             }
@@ -807,7 +691,7 @@ export default {
                   width: 15px;
                 }
                 span {
-                  margin: 2px 5px 0 5px;
+                  margin: 0px 5px 0 5px;
                 }
               }
               .box6 {
@@ -845,18 +729,38 @@ export default {
             .box2_1 {
               .box2InputTo {
                 width: 110px;
+                height: 27px;
                 font-size: 20px;
               }
             }
             .box3 {
-              .box3_1 {
-                font-size: 11px;
-              }
-              .box3_2 {
-                line-height: 20px;
-                img {
-                  width: 11px;
-                  height: 11px;
+              .chooseBox3 {
+                .box3_1 {
+                  font-size: 11px;
+                }
+                .box3_2 {
+                  line-height: 20px;
+                  img {
+                    width: 11px;
+                    height: 11px;
+                  }
+                }
+                .coinNameAndImg {
+                  width: 73px;
+                  height: 21px;
+                  border-radius: 8px;
+                  .img1 {
+                    width: 15px;
+                    height: 13px;
+                  }
+                  span {
+                    margin: 0px 5px 0 5px;
+                    font-size: 12px;
+                  }
+                  .img2 {
+                    width: 11px;
+                    height: 11px;
+                  }
                 }
               }
             }

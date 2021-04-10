@@ -5,7 +5,7 @@
         <div class="titleMsg">农场</div>
         <p class="titleNav">筹集流动资金池（LP）代币以赚取收益</p>
       </div>
-      <div class="mainContent">
+      <div class="mainContent" v-if="flag">
         <div class="submenu">
           <div class="img1">
             <img src="../assets/image/farm/img4.png" alt="" />
@@ -34,7 +34,7 @@
         </div>
         <div class="submenu">
           <div class="img">
-            <img src="../assets/image/farm/img2.png" alt="" />
+            <img src="../assets/image/farm/img3.png" alt="" />
           </div>
           <div class="tab">BNB-PIZ/LP 质押挖矿</div>
           <div class="msg">
@@ -47,7 +47,7 @@
         </div>
         <div class="submenu">
           <div class="img">
-            <img src="../assets/image/farm/img3.png" alt="" />
+            <img src="../assets/image/farm/img2.png" alt="" />
           </div>
           <div class="tab">BNB-PIZ/LP 质押挖矿</div>
           <div class="msg">
@@ -59,19 +59,37 @@
           </div>
         </div>
       </div>
+      <div class="registerBtn" v-if="!flag">
+        <div class="register" @click="handleRegister">注册</div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import fun from '../mixins/common.js'
+
 export default {
+  mixins: [fun],
   data() {
     return {
+      inviter: '',
+      flag: false,
+      state: '',
       dialogVisible: false,
+      address: this.$store.state.adsCastle, //城堡合约
+      abi: this.$store.state.abiCastle, // 城堡合约地址abi
+      raddress: '', //推荐人地址
+      addressAll: '', //钱包地址
     }
   },
   created() {
     this.$store.commit('instance')
+    this.getStatsMsg()
+    this.hendleWalletBtn()
+  },
+  mounted() {
+    this.inviter = location.hash.slice(7)
   },
   methods: {
     handlePizdig(pid) {
@@ -307,6 +325,50 @@ export default {
         '0x8F5715B7e6F00282a49e309D0fFf27DcdE4c6ca0'
       )
     },
+    async getStatsMsg() {
+      const accounts = await this.getAccounts()
+      const newAccounts = accounts[0]
+      const contractInstance = this.contractWebEth(this.abi, this.address)
+      contractInstance.methods
+        .getStats(newAccounts)
+        .call()
+        .then((res) => {
+          console.log(res.stats)
+          this.state = res.stats[0]
+          console.log('this.state', this.state)
+          if (this.state != 0) {
+            this.flag = true
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+    //  获得钱包地址
+    async hendleWalletBtn() {
+      if (typeof window.ethereum !== 'undefined') {
+        console.log('MetaMask is installed!')
+      }
+      const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
+      console.log(accounts)
+      this.addressAll = accounts[0]
+    },
+    // 注册
+    async handleRegister() {
+      const accounts = await this.getAccounts()
+      const newAccounts = accounts[0]
+      const contractInstance = this.contractWebEth(this.abi, this.address)
+      await contractInstance.methods
+        .register('0x96f673ef8C7584ad53cC9fc3Dbc281965fbFe6A4')
+        .send({ from: newAccounts })
+        .then((res) => {
+          console.log('resres', res)
+          this.getStatsMsg()
+        })
+        .catch((err) => {
+          console.log('errerr', err)
+        })
+    },
   },
 }
 </script>
@@ -331,7 +393,7 @@ export default {
         font-family: PingFang-SC-Regular, PingFang-SC;
         font-weight: 400;
         color: #666666;
-        margin: 20px 0;
+        margin: 10px 0 40px 0;
       }
     }
     .mainContent {
@@ -388,7 +450,21 @@ export default {
         color: #ffffff;
       }
     }
-
+    .registerBtn {
+      width: 496px;
+      height: 58px;
+      line-height: 58px;
+      background: #1ec7d5;
+      border-radius: 29px;
+      text-align: center;
+      margin: auto;
+      .register {
+        font-size: 20px;
+        font-weight: bold;
+        color: #ffffff;
+        cursor: pointer;
+      }
+    }
     .diaContent {
       width: 100%;
       .title1 {
@@ -501,7 +577,7 @@ export default {
         }
         .titleNav {
           font-size: 12px;
-          margin: 10px 0;
+          margin: 10px 0 20px 0;
         }
       }
       .mainContent {
@@ -545,6 +621,21 @@ export default {
             height: 40px;
             font-size: 14px;
           }
+        }
+      }
+      .registerBtn {
+        width: 238px;
+        height: 28px;
+        line-height: 28px;
+        background: #1ec7d5;
+        border-radius: 19px;
+        text-align: center;
+        margin: auto;
+        .register {
+          font-size: 14px;
+          font-weight: bold;
+          color: #ffffff;
+          cursor: pointer;
         }
       }
       .diaContent {

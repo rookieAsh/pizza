@@ -7,7 +7,9 @@ export default new Vuex.Store({
   state: {
     address: '',
     addressAll: '',
-    abi: [
+    adsFarm: '0xd1f51799fd91De9b6D2cD5a56CCCa50FcB8213D6', //农场合约地址
+    //农场合约地址abi
+    abiFarm: [
       {
         inputs: [
           { internalType: 'contract IERC20', name: '_piz', type: 'address' },
@@ -52,6 +54,17 @@ export default new Vuex.Store({
         type: 'function',
       },
       {
+        constant: true,
+        inputs: [],
+        name: 'castle',
+        outputs: [
+          { internalType: 'contract ICastle', name: '', type: 'address' },
+        ],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
         constant: false,
         inputs: [],
         name: 'claimOwnership',
@@ -91,14 +104,12 @@ export default new Vuex.Store({
         type: 'function',
       },
       {
-        constant: true,
-        inputs: [
-          { internalType: 'address', name: 'uaddress', type: 'address' },
-        ],
-        name: 'isUserExists',
-        outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+        constant: false,
+        inputs: [{ internalType: 'uint256', name: 'pid', type: 'uint256' }],
+        name: 'forceExit',
+        outputs: [],
         payable: false,
-        stateMutability: 'view',
+        stateMutability: 'nonpayable',
         type: 'function',
       },
       {
@@ -141,8 +152,17 @@ export default new Vuex.Store({
       },
       {
         constant: true,
+        inputs: [],
+        name: 'poolLength',
+        outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: true,
         inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-        name: 'poolInfo',
+        name: 'pools',
         outputs: [
           { internalType: 'contract IERC20', name: 'lpToken', type: 'address' },
           { internalType: 'uint256', name: 'rewardRate', type: 'uint256' },
@@ -154,30 +174,10 @@ export default new Vuex.Store({
         type: 'function',
       },
       {
-        constant: true,
-        inputs: [],
-        name: 'poolLength',
-        outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-        payable: false,
-        stateMutability: 'view',
-        type: 'function',
-      },
-      {
         constant: false,
         inputs: [{ internalType: 'uint256', name: 'pid', type: 'uint256' }],
         name: 'reap',
         outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-        payable: false,
-        stateMutability: 'nonpayable',
-        type: 'function',
-      },
-      {
-        constant: false,
-        inputs: [
-          { internalType: 'address', name: 'raddress', type: 'address' },
-        ],
-        name: 'register',
-        outputs: [],
         payable: false,
         stateMutability: 'nonpayable',
         type: 'function',
@@ -206,6 +206,21 @@ export default new Vuex.Store({
       {
         constant: false,
         inputs: [
+          {
+            internalType: 'contract ICastle',
+            name: '_castle',
+            type: 'address',
+          },
+        ],
+        name: 'setCaltle',
+        outputs: [],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+      {
+        constant: false,
+        inputs: [
           { internalType: 'uint256', name: 'amount', type: 'uint256' },
           { internalType: 'uint256', name: 'pid', type: 'uint256' },
         ],
@@ -221,14 +236,293 @@ export default new Vuex.Store({
           { internalType: 'uint256', name: '', type: 'uint256' },
           { internalType: 'address', name: '', type: 'address' },
         ],
-        name: 'stakeInfos',
+        name: 'stakes',
         outputs: [
           { internalType: 'uint256', name: 'amount', type: 'uint256' },
-          { internalType: 'uint256', name: 'yieldRate', type: 'uint256' },
+          {
+            internalType: 'uint256',
+            name: 'rewardPerTokenStored',
+            type: 'uint256',
+          },
           { internalType: 'uint256', name: 'reward', type: 'uint256' },
         ],
         payable: false,
         stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: false,
+        inputs: [
+          { internalType: 'address', name: 'newOwner', type: 'address' },
+          { internalType: 'bool', name: 'direct', type: 'bool' },
+          { internalType: 'bool', name: 'renounce', type: 'bool' },
+        ],
+        name: 'transferOwnership',
+        outputs: [],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+      {
+        constant: false,
+        inputs: [
+          { internalType: 'uint256', name: 'amount', type: 'uint256' },
+          { internalType: 'uint256', name: 'pid', type: 'uint256' },
+        ],
+        name: 'withdraw',
+        outputs: [],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+    ],
+    adsCastle: '0x64567b2945050b99aD865c1D861a1518D8F59fCF', //城堡合约地址
+    // 城堡abi
+    abiCastle: [
+      {
+        inputs: [
+          { internalType: 'address', name: 'ROOT', type: 'address' },
+          { internalType: 'contract IERC20', name: '_piz', type: 'address' },
+          { internalType: 'address', name: '_usdtpizlp', type: 'address' },
+        ],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'constructor',
+      },
+      {
+        anonymous: false,
+        inputs: [
+          {
+            indexed: true,
+            internalType: 'address',
+            name: 'previousOwner',
+            type: 'address',
+          },
+          {
+            indexed: true,
+            internalType: 'address',
+            name: 'newOwner',
+            type: 'address',
+          },
+        ],
+        name: 'OwnershipTransferred',
+        type: 'event',
+      },
+      {
+        constant: true,
+        inputs: [
+          { internalType: 'address', name: 'uaddress', type: 'address' },
+          { internalType: 'uint256', name: 'vip', type: 'uint256' },
+        ],
+        name: 'checkupgrade',
+        outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: false,
+        inputs: [],
+        name: 'claimOwnership',
+        outputs: [],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [
+          { internalType: 'address', name: 'uaddress', type: 'address' },
+        ],
+        name: 'earn',
+        outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [{ internalType: 'address', name: '', type: 'address' }],
+        name: 'earns',
+        outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: false,
+        inputs: [],
+        name: 'exit',
+        outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: 'farm',
+        outputs: [
+          { internalType: 'contract IFarm', name: '', type: 'address' },
+        ],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: false,
+        inputs: [{ internalType: 'uint256', name: 'amount', type: 'uint256' }],
+        name: 'farming',
+        outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [
+          { internalType: 'uint256', name: 'usdtamount', type: 'uint256' },
+        ],
+        name: 'getPiz',
+        outputs: [
+          { internalType: 'uint256', name: 'pizamount', type: 'uint256' },
+        ],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [
+          { internalType: 'uint256', name: 'pid', type: 'uint256' },
+          { internalType: 'uint256', name: 'amount', type: 'uint256' },
+        ],
+        name: 'getPiz',
+        outputs: [
+          { internalType: 'uint256', name: 'pizamount', type: 'uint256' },
+        ],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [
+          { internalType: 'address', name: 'uaddress', type: 'address' },
+        ],
+        name: 'getStats',
+        outputs: [
+          { internalType: 'uint256[8]', name: 'stats', type: 'uint256[8]' },
+          { internalType: 'address', name: 'referer', type: 'address' },
+        ],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [
+          { internalType: 'uint256', name: 'pizamount', type: 'uint256' },
+        ],
+        name: 'getUsdt',
+        outputs: [
+          { internalType: 'uint256', name: 'usdtamount', type: 'uint256' },
+        ],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [
+          { internalType: 'address', name: 'uaddress', type: 'address' },
+        ],
+        name: 'isUserExists',
+        outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: 'owner',
+        outputs: [{ internalType: 'address', name: '', type: 'address' }],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: 'pendingOwner',
+        outputs: [{ internalType: 'address', name: '', type: 'address' }],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: 'piz',
+        outputs: [
+          { internalType: 'contract IERC20', name: '', type: 'address' },
+        ],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+        name: 'rateGlobals',
+        outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: false,
+        inputs: [],
+        name: 'reap',
+        outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+      {
+        constant: false,
+        inputs: [
+          { internalType: 'address', name: 'raddress', type: 'address' },
+        ],
+        name: 'register',
+        outputs: [],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+      {
+        constant: false,
+        inputs: [
+          { internalType: 'contract IFarm', name: '_farm', type: 'address' },
+        ],
+        name: 'setFarm',
+        outputs: [],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+      {
+        constant: false,
+        inputs: [
+          { internalType: 'address', name: 'uaddress', type: 'address' },
+          { internalType: 'uint256', name: 'pid', type: 'uint256' },
+          { internalType: 'uint256', name: 'amount', type: 'uint256' },
+        ],
+        name: 'stake',
+        outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+        payable: false,
+        stateMutability: 'nonpayable',
         type: 'function',
       },
       {
@@ -254,6 +548,33 @@ export default new Vuex.Store({
         type: 'function',
       },
       {
+        constant: false,
+        inputs: [],
+        name: 'updateRateGlobals',
+        outputs: [],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: 'updateTime',
+        outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: 'usdtpizlp',
+        outputs: [{ internalType: 'address', name: '', type: 'address' }],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
         constant: true,
         inputs: [],
         name: 'userCounter',
@@ -270,10 +591,22 @@ export default new Vuex.Store({
           { internalType: 'uint256', name: 'id', type: 'uint256' },
           { internalType: 'uint256', name: 'teamMass', type: 'uint256' },
           { internalType: 'uint256', name: 'referrals', type: 'uint256' },
-          { internalType: 'uint256', name: 'teamMax', type: 'uint256' },
           { internalType: 'uint256', name: 'partners', type: 'uint256' },
-          { internalType: 'address', name: 'referer', type: 'address' },
+          { internalType: 'uint256', name: 'deposited', type: 'uint256' },
+          { internalType: 'uint256', name: 'pizdeposited', type: 'uint256' },
+          { internalType: 'uint256', name: 'level', type: 'uint256' },
+          { internalType: 'uint256', name: 'rateUsed', type: 'uint256' },
+          { internalType: 'address', name: 'referrer', type: 'address' },
         ],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+        name: 'vipGlobals',
+        outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
         payable: false,
         stateMutability: 'view',
         type: 'function',
@@ -281,11 +614,195 @@ export default new Vuex.Store({
       {
         constant: false,
         inputs: [
-          { internalType: 'uint256', name: 'amount', type: 'uint256' },
+          { internalType: 'address', name: 'uaddress', type: 'address' },
           { internalType: 'uint256', name: 'pid', type: 'uint256' },
+          { internalType: 'uint256', name: 'amount', type: 'uint256' },
         ],
         name: 'withdraw',
-        outputs: [],
+        outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+    ],
+    adsTest: '0x116f88f48da8da893bc390564d430d918eb0412e', //测试PIZ地址
+    //测试PIZ地址abi
+    abiTest: [
+      {
+        inputs: [
+          { internalType: 'string', name: 'name', type: 'string' },
+          { internalType: 'string', name: 'symbol', type: 'string' },
+          { internalType: 'uint8', name: 'decimals', type: 'uint8' },
+          { internalType: 'uint256', name: 'initialBalance', type: 'uint256' },
+        ],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'constructor',
+      },
+      {
+        anonymous: false,
+        inputs: [
+          {
+            indexed: true,
+            internalType: 'address',
+            name: 'owner',
+            type: 'address',
+          },
+          {
+            indexed: true,
+            internalType: 'address',
+            name: 'spender',
+            type: 'address',
+          },
+          {
+            indexed: false,
+            internalType: 'uint256',
+            name: 'value',
+            type: 'uint256',
+          },
+        ],
+        name: 'Approval',
+        type: 'event',
+      },
+      {
+        anonymous: false,
+        inputs: [
+          {
+            indexed: true,
+            internalType: 'address',
+            name: 'from',
+            type: 'address',
+          },
+          {
+            indexed: true,
+            internalType: 'address',
+            name: 'to',
+            type: 'address',
+          },
+          {
+            indexed: false,
+            internalType: 'uint256',
+            name: 'value',
+            type: 'uint256',
+          },
+        ],
+        name: 'Transfer',
+        type: 'event',
+      },
+      {
+        constant: true,
+        inputs: [
+          { internalType: 'address', name: 'owner', type: 'address' },
+          { internalType: 'address', name: 'spender', type: 'address' },
+        ],
+        name: 'allowance',
+        outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: false,
+        inputs: [
+          { internalType: 'address', name: 'spender', type: 'address' },
+          { internalType: 'uint256', name: 'amount', type: 'uint256' },
+        ],
+        name: 'approve',
+        outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
+        name: 'balanceOf',
+        outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: 'decimals',
+        outputs: [{ internalType: 'uint8', name: '', type: 'uint8' }],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: false,
+        inputs: [
+          { internalType: 'address', name: 'spender', type: 'address' },
+          { internalType: 'uint256', name: 'subtractedValue', type: 'uint256' },
+        ],
+        name: 'decreaseAllowance',
+        outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+      {
+        constant: false,
+        inputs: [
+          { internalType: 'address', name: 'spender', type: 'address' },
+          { internalType: 'uint256', name: 'addedValue', type: 'uint256' },
+        ],
+        name: 'increaseAllowance',
+        outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: 'name',
+        outputs: [{ internalType: 'string', name: '', type: 'string' }],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: 'symbol',
+        outputs: [{ internalType: 'string', name: '', type: 'string' }],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: true,
+        inputs: [],
+        name: 'totalSupply',
+        outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+        payable: false,
+        stateMutability: 'view',
+        type: 'function',
+      },
+      {
+        constant: false,
+        inputs: [
+          { internalType: 'address', name: 'recipient', type: 'address' },
+          { internalType: 'uint256', name: 'amount', type: 'uint256' },
+        ],
+        name: 'transfer',
+        outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
+        payable: false,
+        stateMutability: 'nonpayable',
+        type: 'function',
+      },
+      {
+        constant: false,
+        inputs: [
+          { internalType: 'address', name: 'sender', type: 'address' },
+          { internalType: 'address', name: 'recipient', type: 'address' },
+          { internalType: 'uint256', name: 'amount', type: 'uint256' },
+        ],
+        name: 'transferFrom',
+        outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
         payable: false,
         stateMutability: 'nonpayable',
         type: 'function',
@@ -312,16 +829,6 @@ export default new Vuex.Store({
       }
     },
   },
-  actions: {
-    // async hendleWallet() {
-    //   if (typeof window.ethereum !== 'undefined') {
-    //     console.log('MetaMask is installed!')
-    //   }
-    //   const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
-    //   console.log(accounts)
-    //   this.addressAll = accounts[0]
-    //   this.address = accounts[0].slice(0, 8) + '...'
-    // },
-  },
+  actions: {},
   modules: {},
 })

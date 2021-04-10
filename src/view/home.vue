@@ -9,7 +9,7 @@
       <el-menu
         active-text-color="#4dbcff"
         unique-opened
-        default-active="1"
+        :default-active="this.$route.path"
         :collapse="isCollapse"
         :collapse-transition="false"
         router
@@ -31,6 +31,7 @@
               :key="key"
               :index="'/' + items.path"
               class="elmenuitem"
+              @click="handleClick(1111)"
             >
               <img class="imgNav" :src="items.icon" />
               <span>{{ items.authName }}</span>
@@ -46,6 +47,17 @@
             <span>{{ item.authName }}</span>
           </el-menu-item>
         </template>
+        <div class="invite" v-if="userState != 0">
+          <img src="../assets/image/home/invite.png" alt="" />
+          <span v-show="!isCollapse" @click="inviteBtn('copy1')">邀请链接</span>
+        </div>
+        <div
+          class="yaoqing1"
+          id="copy1"
+          style="width: 100px; word-wrap: break-word"
+        >
+          http://pizswap.com/#/farm?{{ this.addressAll }}
+        </div>
       </el-menu>
     </el-aside>
 
@@ -132,7 +144,7 @@
               @click="hendleWalletBtn()"
               v-if="address == ''"
             >
-              <span> 连接地址 </span>
+              <span>连接钱包</span>
             </button>
           </div>
         </div>
@@ -159,31 +171,6 @@
           </div>
           <div class="headerRight">
             <div class="languageBtn">
-              <!-- <el-dropdown trigger="click" @command="handleCommand">
-                <span class="el-dropdown-link" v-if="$i18n.locale === 'zh'">
-                  <img src="../assets/image/home/china.png" alt="" />CN<i
-                    class="el-icon-arrow-down el-icon--right"
-                  ></i>
-                </span>
-                <span class="el-dropdown-link" v-if="$i18n.locale === 'en'">
-                  <img src="../assets/image/home/en.svg" alt="" />EN<i
-                    class="el-icon-arrow-down el-icon--right"
-                  ></i>
-                </span>
-
-                <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item command="zh">
-                    <img
-                      src="../assets/image/home/china.png"
-                      alt=""
-                    />CN</el-dropdown-item
-                  >
-                  <el-dropdown-item command="en">
-                    <img src="../assets/image/home/en.svg" alt="" />
-                    EN</el-dropdown-item
-                  >
-                </el-dropdown-menu>
-              </el-dropdown> -->
               <el-dropdown trigger="click" @command="handleCommand">
                 <span class="el-dropdown-link" v-if="$i18n.locale === 'zh'">
                   <img src="../assets/image/home/china.png" alt="" />中文<i
@@ -239,8 +226,8 @@
             <button class="moneyBtn" v-if="address">
               <span> {{ address }}</span>
             </button>
-            <button class="moneyBtn" @click="hendleWallet()" v-if="!address">
-              <span> 连接钱包</span>
+            <button class="moneyBtn" @click="hendleWalletBtn()" v-if="!address">
+              <span>连接钱包</span>
             </button>
           </div>
         </div>
@@ -294,6 +281,15 @@
                 <span>{{ item.authName }}</span>
               </el-menu-item>
             </template>
+            <div class="invite" v-if="userState != 0">
+              <img src="../assets/image/home/invite.png" alt="" />
+              <span v-show="!isCollapse" @click="inviteBtn2('copy2')"
+                >邀请链接</span
+              >
+            </div>
+            <div class="yaoqing1" id="copy2">
+              http://192.168.2.5:8080/#/farm?{{ this.addressAll }}
+            </div>
           </van-popup>
         </el-menu>
       </el-aside>
@@ -308,15 +304,20 @@
 </template>
 
 <script>
+import fun from '../mixins/common.js'
 import img1 from '../assets/image/home/img1.png'
 import img2 from '../assets/image/home/img2.png'
 import img3 from '../assets/image/home/img3.png'
 import img4 from '../assets/image/home/img4.png'
+import invite from '../assets/image/home/invite.png'
 import { mapActions } from 'vuex'
 export default {
+  mixins: [fun],
   data() {
     return {
+      userState: '',
       address: '',
+      addressAll: '',
       show: false,
       drawer: false,
       direction: 'ltr',
@@ -344,12 +345,12 @@ export default {
               path: 'trading',
               key: 31,
             },
-            {
-              authName: '流动性',
-              id: 'liquidity',
-              path: 'liquidity',
-              key: 32,
-            },
+            // {
+            //   authName: '流动性',
+            //   id: 'liquidity',
+            //   path: 'liquidity',
+            //   key: 32,
+            // },
           ],
         },
         {
@@ -368,15 +369,46 @@ export default {
           key: 5,
           children: [],
         },
+        // {
+        //   authName: '邀请链接',
+        //   id: 'invite',
+        //   path: 'invite',
+        //   icon: invite,
+        //   key: 6,
+        //   children: [],
+        // },
       ],
+      addressCastle: this.$store.state.adsCastle, //城堡合约
+      // 城堡合约地址abi
+      abi: this.$store.state.abiCastle,
+      // 定时器
+      intervalId: null,
     }
   },
   created() {
     this.$store.commit('instance')
     this.hendleWalletBtn()
+    this.dataRefreh()
+    this.getStatsMsg()
   },
   methods: {
-    ...mapActions(['hendleWallet']),
+    //定时器
+    dataRefreh() {
+      // 计时器正在进行中，退出函数
+      if (this.intervalId != null) {
+        return
+      }
+      // 计时器为空，操作
+      this.intervalId = setInterval(() => {
+        this.hendleWalletBtn() //加载数据函数
+        this.getStatsMsg()
+      }, 3000)
+    },
+    // 停止定时器
+    clear() {
+      clearInterval(this.intervalId) //清除计时器
+      this.intervalId = null //设置为null
+    },
     isCollapseClick() {
       this.isCollapse = !this.isCollapse
     },
@@ -395,6 +427,54 @@ export default {
       this.addressAll = accounts[0]
       this.address = accounts[0].slice(0, 8) + '...'
     },
+    handleClick(val) {
+      console.log(val)
+    },
+    // 复制邀请链接
+    invite(copy) {
+      const range = document.createRange()
+      range.selectNode(document.getElementById(copy))
+      const selection = window.getSelection()
+      if (selection.rangeCount > 0) selection.removeAllRanges()
+      selection.addRange(range)
+      document.execCommand('copy')
+      this.$message.success('复制成功')
+    },
+    inviteBtn(copy) {
+      this.invite(copy)
+    },
+    inviteBtn2(copy) {
+      this.invite(copy)
+    },
+    //获得用户ID
+    async getStatsMsg() {
+      const accounts = await this.getAccounts()
+      const newAccounts = accounts[0]
+      console.log('newAccounts', newAccounts)
+      const contractInstance = this.contractWebEth(this.abi, this.addressCastle)
+      const res = contractInstance.methods
+        .getStats(newAccounts)
+        .call()
+        .then((res) => {
+          this.userState = res.stats[0]
+        })
+        .catch((err) => {
+          console.log('err', err)
+        })
+    },
+  },
+  destroyed() {
+    // 在页面销毁后，清除计时器
+    this.clear()
+  },
+  watch: {
+    addressAll: {
+      handler(newVal, objVal) {
+        if (newVal != objVal) {
+          this.$router.push('/family')
+        }
+      },
+    },
   },
 }
 </script>
@@ -407,6 +487,28 @@ export default {
     background-repeat: no-repeat;
     .elmenu {
       background: rgba(0, 0, 0, 0) !important;
+      .invite {
+        height: 30px;
+        margin-top: 10px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        img {
+          width: 22px;
+          height: 22px;
+          margin: 0 10px 0 20px;
+        }
+        span {
+          font-size: 19px;
+        }
+      }
+      .invite:active {
+        color: #5fbcfb;
+      }
+      .yaoqing1 {
+        position: absolute;
+        z-index: -1000;
+      }
     }
     .elmenu .elmenuitem {
       font-size: 19px;
@@ -503,7 +605,7 @@ export default {
             cursor: pointer;
             display: flex;
             flex-direction: row;
-            justify-content: start;
+            justify-content: flex-start;
             align-items: center;
             font-size: 16px;
             font-family: PingFangSC-Medium, PingFang SC;
@@ -537,7 +639,7 @@ export default {
 .el-dropdown-menu {
   .el-dropdown-menu__item {
     display: flex;
-    justify-content: start;
+    justify-content: flex-start;
     align-items: center;
     font-size: 16px;
     font-family: PingFangSC-Medium, PingFang SC;
@@ -582,7 +684,7 @@ export default {
   .el-dropdown-menu {
     .el-dropdown-menu__item {
       display: flex;
-      justify-content: start;
+      justify-content: flex-start;
       align-items: center;
       height: 28px;
       font-size: 13px;
@@ -608,6 +710,7 @@ export default {
       height: 100%;
       border: none;
       background-color: #fff;
+      z-index: +1111;
       .elmenu {
         border: none;
         .van-overlay {
@@ -621,11 +724,35 @@ export default {
           border: none;
           position: fixed;
           top: 373px;
+          .invite {
+            height: 30px;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            img {
+              width: 16px;
+              height: 16px;
+              margin: 2px 8px 0 20px;
+            }
+            span {
+              font-size: 14px;
+            }
+          }
+          .invite:active {
+            color: #5fbcfb;
+          }
         }
         .imgNav {
           width: 16px;
           height: 16px;
           border: none;
+        }
+        .yaoqing1 {
+          position: absolute;
+          right: -111111111px;
+          // color: red;
+          z-index: -1000;
         }
       }
     }

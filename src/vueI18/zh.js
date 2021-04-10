@@ -6,6 +6,6 @@
 // }
 
 export const lang = {
-  name: '小米小米',
-  message: '这是小米'
+  name: '披萨披萨',
+  message: '这是披萨',
 }

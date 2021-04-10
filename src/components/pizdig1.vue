@@ -14,7 +14,7 @@
         <div class="box1">{{ number2 }}</div>
         <div class="box2">PIZ已质押</div>
         <div class="box3">
-          <button @click="handlePizdig1()">质押</button>
+          <button @click="handlePizdig()">质押</button>
         </div>
       </div>
     </div>
@@ -24,19 +24,35 @@
       </button>
     </div>
     <!-- 弹窗 -->
-    <el-dialog :visible.sync="dialogVisible" :before-close="handleClose" center>
+    <el-dialog
+      :visible.sync="dialogVisible"
+      :before-close="handleClose"
+      center
+      v-loading.fullscreen.lock="fullscreenLoading"
+      element-loading-text="加载中..."
+    >
       <div class="diaContent">
         <div class="title1">质押</div>
-        <div class="title2">{{ number2 }} PIZ可用</div>
+        <div class="title2">{{ number3 }} USDT-PIZ/LP可用</div>
 
         <div class="inputMag">
           <div class="pizmsg">PIZ</div>
-          <input class="pizInput" placeholder="请输入数量" />
+          <input
+            class="pizInput"
+            v-model="pizNumber"
+            placeholder="请输入数量"
+          />
         </div>
-        <div class="title3">最大值</div>
+        <div class="title3" @click="getMaxNumber()">最大值</div>
         <div class="buttonBox">
           <button class="confimBtn" @click="confimBtn()">授权</button>
-          <button class="cancelBtn" @click="cancelBtn()">质押</button>
+          <button
+            class="cancelBtn"
+            @click="cancelBtn()"
+            :class="{ cancelBtnFlag: flag }"
+          >
+            质押
+          </button>
         </div>
       </div>
     </el-dialog>
@@ -44,43 +60,188 @@
 </template>
 
 <script>
+import fun from '../mixins/common.js'
+
 export default {
+  mixins: [fun],
   data() {
     return {
+      fullscreenLoading: false, //置灰开关
+      flag: false,
       dialogVisible: false,
+      address1: this.$store.state.adsTest, //测试piz地址
+      abi1: this.$store.state.abiTest, //测试地址abi
+      address: this.$store.state.adsFarm, //农场合约地址
+      abi: this.$store.state.abiFarm, //农场合约合约地址abi
       pid: this.$route.query.key,
-      abi: this.$store.state.abi,
-      address: '0x10FC9968D9c36a06eB08C5A81B7343431124e337',
       number1: '',
       number2: '',
+      number3: '',
       pizNumber: '',
+      precision: '', //精度
     }
   },
   created() {
-    this.getDateNum1()
-    this.getDateNum2()
+    this.getPizAaddress()
+
+    // this.getPrecision()
+    // this.getDateNum1()
+    // this.getDateNum2()
+    // this.getPizNumber()
+    // this.getMaxNumber()
   },
   methods: {
-    handlePizdig1() {
+    handlePizdig() {
       this.dialogVisible = true
+      this.pizNumber = ''
+      this.getPizAaddress()
+      console.log(this.pid)
     },
-    confimBtn() {
-      this.dialogVisible = false
-    },
-    cancelBtn() {
-      this.dialogVisible = false
-    },
+    // 关闭弹窗
     handleClose() {
       this.dialogVisible = false
+      this.pizNumber = ''
+    },
+
+    // 获得piz地址
+    async getPizAaddress() {
+      const accounts = await this.getAccounts()
+      const newAccounts = accounts[0]
+      const contractInstance = this.contractWebEth(this.abi, this.address)
+      await contractInstance.methods
+        .pools(this.pid)
+        .call()
+        .then((res) => {
+          this.address1 = res.lpToken
+          console.log(11111111, this.address1)
+          this.getPrecision()
+          this.getDateNum1()
+          this.getDateNum2()
+          this.getPizNumber()
+        })
+    },
+    //获得最大的值
+    async getMaxNumber() {
+      const accounts = await this.getAccounts()
+      const newAccounts = accounts[0]
+      const contractInstance = this.contractWebEth(this.abi1, this.address1)
+      await contractInstance.methods
+        .decimals()
+        .call()
+        .then((res) => {
+          this.precision = res
+        })
+      await contractInstance.methods
+        .balanceOf(newAccounts)
+        .call()
+        .then((res) => {
+          this.pizNumber = res / Math.pow(10, this.precision)
+        })
+    },
+    // 先获取精度
+    async getPrecision() {
+      console.log('this.precision', this.precision)
+      const accounts = await this.getAccounts()
+      const newAccounts = accounts[0]
+      const contractInstance = this.contractWebEth(this.abi1, this.address1)
+      await contractInstance.methods
+        .decimals()
+        .call()
+        .then((res) => {
+          this.precision = res
+        })
+    },
+    // 获得可用piz
+    async getPizNumber() {
+      console.log('this.precision', this.precision)
+      const accounts = await this.getAccounts()
+      const newAccounts = accounts[0]
+      const contractInstance = this.contractWebEth(this.abi1, this.address1)
+      await contractInstance.methods
+        .decimals()
+        .call()
+        .then((res) => {
+          this.precision = res
+        })
+      await contractInstance.methods
+        .balanceOf(newAccounts)
+        .call()
+        .then((res) => {
+          console.log(res)
+          this.number3 = res / Math.pow(10, this.precision)
+          this.number3 = this.number3.toFixed(2)
+          console.log(this.number3)
+        })
+    },
+    // 授权approve
+    async confimBtn() {
+      this.fullscreenLoading = true
+      const accounts = await this.getAccounts()
+      const newAccounts = accounts[0]
+      const contractInstance = this.contractWebEth(this.abi1, this.address1)
+      await contractInstance.methods
+        .decimals()
+        .call()
+        .then((res) => {
+          this.precision = res
+        })
+      await contractInstance.methods
+        .approve(this.address, this.pizNumber * Math.pow(10, this.precision))
+        .send({ from: newAccounts })
+        .then((res) => {
+          console.log('授权approve', res)
+          if (res.status == true) {
+            this.$message.success('授权成功')
+            this.flag = true
+            this.fullscreenLoading = false
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          this.$message.error('用户拒绝事务签名')
+          this.fullscreenLoading = false
+        })
+    },
+    // 质押stake
+    async cancelBtn() {
+      if (!this.flag) {
+        this.$message.warning('请先授权')
+        return
+      }
+      this.fullscreenLoading = true
+      const accounts = await this.getAccounts()
+      const newAccounts = accounts[0]
+      const contractInstance = this.contractWebEth(this.abi, this.address)
+      await contractInstance.methods
+        .stake(this.pizNumber * 1000000, this.pid)
+        .send({ from: newAccounts })
+        .then((res) => {
+          console.log('质押', res)
+          if (res.status == true) {
+            this.$message.success('质押成功')
+            this.flag = false
+            this.pizInput = ''
+            this.dialogVisible = false
+            this.fullscreenLoading = false
+            this.getDateNum2()
+            this.getDateNum1()
+            this.getPizNumber()
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          if (res.status == false) {
+            this.$message.error('质押失败')
+            this.fullscreenLoading = false
+          }
+        })
     },
     // 获取
     async getDate() {
-      const accounts = await ethereum.request({
-        method: 'eth_requestAccounts',
-      })
+      const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
-      const contractInstance = new web3.eth.Contract(this.abi, this.address)
-      const res = await contractInstance.methods
+      const contractInstance = this.contractWebEth(this.abi, this.address)
+      await contractInstance.methods
         .reap(this.pid)
         .send({ from: newAccounts })
         .then((res, err) => {
@@ -91,40 +252,48 @@ export default {
     },
     // 获取数量
     async getDateNum1() {
-      const accounts = await ethereum.request({
-        method: 'eth_requestAccounts',
-      })
+      console.log(this.pid)
+      const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
-      const contractInstance = new web3.eth.Contract(this.abi, this.address)
-      const res = await contractInstance.methods.earned(newAccounts, this.pid)
-      this.number1 = res.arguments[1]
+      console.log(newAccounts)
+      const contractInstance = this.contractWebEth(this.abi, this.address)
+      const res = await contractInstance.methods
+        .earned(newAccounts, this.pid)
+        .call()
+      this.number1 = res / Math.pow(10, this.precision)
+      console.log('获取earned', res)
     },
     // 质押数量
     async getDateNum2() {
-      const accounts = await ethereum.request({
-        method: 'eth_requestAccounts',
-      })
+      const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
-      const contractInstance = new web3.eth.Contract(this.abi, this.address)
-      const res = await contractInstance.methods.stakeInfos(
-        newAccounts,
-        this.pid
-      )
-      this.number2 = res.arguments[1]
+      const contractInstance = this.contractWebEth(this.abi, this.address)
+      const res = await contractInstance.methods
+        .stakes(this.pid, newAccounts)
+        .call()
+      this.number2 = res.amount / Math.pow(10, this.precision)
+      console.log('stakes', res)
     },
     // 收割并赎回
     async harvestAndRedemption() {
-      const accounts = await ethereum.request({
-        method: 'eth_requestAccounts',
-      })
+      const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
-      const contractInstance = new web3.eth.Contract(this.abi, this.address)
-      const res = await contractInstance.methods
+      const contractInstance = this.contractWebEth(this.abi, this.address)
+      await contractInstance.methods
         .exit(this.pid)
         .send({ from: newAccounts })
-        .then((res, err) => {
-          if (!err) {
-            console.log(res)
+        .then((res) => {
+          console.log('提取', res)
+          if (res.status == true) {
+            this.$message.success('提取成功')
+            this.getDateNum1()
+            this.getDateNum2()
+          }
+        })
+        .catch((err) => {
+          console.log(err)
+          if (res.status == false) {
+            this.$message.error('提取失败')
           }
         })
     },
@@ -166,6 +335,7 @@ export default {
       background-color: #ffffff;
       margin-right: 20px;
       .box1 {
+        height: 32px;
         margin-top: 54px;
         font-size: 24px;
         font-family: PingFang-SC-Bold, PingFang-SC;
@@ -203,6 +373,7 @@ export default {
       background-color: #ffffff;
       margin-right: 20px;
       .box1 {
+        height: 32px;
         margin-top: 54px;
         font-size: 24px;
         font-family: PingFang-SC-Bold, PingFang-SC;
@@ -325,6 +496,17 @@ export default {
         cursor: pointer;
       }
       .cancelBtn {
+        width: 520px;
+        height: 60px;
+        font-size: 24px;
+        background: #cccccc;
+        border-radius: 12px;
+        color: #ffffff;
+        border: none;
+        outline: none;
+        cursor: pointer;
+      }
+      .cancelBtnFlag {
         width: 520px;
         height: 60px;
         font-size: 24px;
@@ -471,9 +653,17 @@ export default {
         .cancelBtn {
           width: 250px;
           height: 30px;
-          background: #1ec7d5;
+          background: #cccccc;
           border-radius: 6px;
           font-size: 12px;
+        }
+        .cancelBtnFlag {
+          width: 250px;
+          height: 30px;
+          border-radius: 6px;
+          font-size: 12px;
+          background: #1ec7d5;
+          color: #ffffff;
         }
       }
     }

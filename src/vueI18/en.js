@@ -6,6 +6,6 @@
 // }
 
 export const lang = {
-  name: "xiaomixiaomi",
-  message: "This is a Xiao"
-};
+  name: 'Pizza, pizza',
+  message: 'This is pizza',
+}

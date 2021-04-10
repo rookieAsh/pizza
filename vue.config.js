@@ -4,6 +4,6 @@ module.exports = {
   outputDir: 'dist',
   devServer: {
     port: 8080,
-    host: '192.168.2.3',
+    host: '192.168.2.5',
   },
 }

@@ -2,8 +2,6 @@
   <div class="container">
     <div class="content">
       <div class="left">
-        <!-- <div class="title">{{ 9527 }}</div>
-        <div class="spanMsg">这是什么</div> -->
         <div class="title">{{ $t('lang.name') }}</div>
         <div class="spanMsg">{{ $t('lang.message') }}</div>
         <div class="rightPhone">
@@ -16,7 +14,8 @@
               <img src="../assets/image/home/img11.png" alt="" />
             </div>
           </button>
-          <button>白皮书</button>
+          <button class="white">白皮书</button>
+          <!-- <button class="register" @click="registerBtn">注册</button> -->
         </div>
         <div class="footerMsg">
           <div>官方消息</div>
@@ -49,7 +48,9 @@ export default {
     }
   },
   created() {},
-  methods: {},
+  methods: {
+    // registerBtn() {},
+  },
 }
 </script>
 
@@ -92,12 +93,12 @@ export default {
       height: 60px;
       line-height: 60px;
       border-radius: 35px;
-      border: 1px solid #fd959b;
+      border: 1px solid #1ec7d5;
       outline: none;
       font-size: 24px;
       font-weight: bold;
       color: #ffffff;
-      background-color: #fd959b;
+      background-color: #1ec7d5;
       cursor: pointer;
     }
     .leftBtn {
@@ -111,6 +112,9 @@ export default {
             margin-right: 5px;
           }
         }
+      }
+      .register {
+        margin-top: 15px;
       }
     }
     .footerMsg {
@@ -182,6 +186,17 @@ export default {
         }
         .leftBtn {
           margin: 17px 0 18px 0;
+          display: flex;
+          flex-direction: row;
+          .downBtn {
+            margin: 0;
+          }
+          .white {
+            margin: 0 10px;
+          }
+          .register {
+            margin: 0;
+          }
           button {
             width: 90px;
             height: 30px;
