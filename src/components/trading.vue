@@ -2,33 +2,20 @@
   <div class="container">
     <div class="iframeBox">
       <iframe
-        src="http://192.168.2.5:3001/#/swap"
+        src="http://pizswap.com/pizswap/#/swap"
         id="mobsf"
         scrolling="no"
         frameborder="0"
         style="position: absolute"
       ></iframe>
-
-      <!-- <iframe
-        style="width: 100%; height: 800px"
-        id="tempHtml"
-        ref="tempHtml"
-        frameborder="0"
-      ></iframe> -->
     </div>
   </div>
 </template>
 
 <script>
-// document.getElementById(
-//   'tempHtml'
-// ).contentDocument.documentElement.innerHTML = this.ifeData
-// import dialog from './dialog.vue'
 export default {
-  // components: { dialog },
   data() {
     return {
-      ifeData: require('../../src/build/index.html'),
       input: '',
       input1: '',
       num: '',
