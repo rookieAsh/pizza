@@ -221,9 +221,7 @@ export default {
             this.pizInput = ''
             this.dialogVisible = false
             this.fullscreenLoading = false
-            this.getDateNum1()
-            this.getDateNum2()
-            this.getPizNumber()
+            this.getPizAaddress()
           }
         })
         .catch((err) => {

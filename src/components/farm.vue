@@ -90,6 +90,9 @@ export default {
   },
   mounted() {
     this.inviter = location.hash.slice(7)
+    if (this.inviter != '') {
+      window.sessionStorage.setItem('setinviter', this.inviter)
+    }
   },
   methods: {
     handlePizdig(pid) {
@@ -334,6 +337,7 @@ export default {
         .call()
         .then((res) => {
           console.log(res.stats)
+          this.raddress = res.referer
           this.state = res.stats[0]
           console.log('this.state', this.state)
           if (this.state != 0) {
@@ -353,17 +357,19 @@ export default {
       console.log(accounts)
       this.addressAll = accounts[0]
     },
+
     // 注册
     async handleRegister() {
+      this.inviter = window.sessionStorage.getItem('setinviter')
       const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
       const contractInstance = this.contractWebEth(this.abi, this.address)
       await contractInstance.methods
-        .register('0x96f673ef8C7584ad53cC9fc3Dbc281965fbFe6A4')
+        .register(this.inviter)
         .send({ from: newAccounts })
         .then((res) => {
-          console.log('resres', res)
-          this.getStatsMsg()
+          this.$message.success('注册成功')
+          console.log(res)
         })
         .catch((err) => {
           console.log('errerr', err)

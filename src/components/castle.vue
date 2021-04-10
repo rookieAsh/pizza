@@ -64,7 +64,7 @@
       </div>
       <div class="right">
         <div class="rightTitle">质押业绩</div>
-        <div>质押业绩：{{ state1 }} PIZ</div>
+        <div>质押业绩：{{ state0 }} PIZ</div>
         <!-- <div>分节点业绩：{{ state2 }} PIZ</div> -->
         <div>持币地址数：{{ state4 }} 个</div>
         <div>个人质押市值：{{ state3 }} U</div>
@@ -72,9 +72,9 @@
         <button @click="handelExtract()">提取</button>
       </div>
     </div>
-    <div class="registerBtn" v-if="!flagRegister">
+    <!-- <div class="registerBtn" v-if="!flagRegister">
       <div class="register" @click="handleRegister()">注册</div>
-    </div>
+    </div> -->
 
     <!-- 弹窗 -->
     <el-dialog
@@ -95,7 +95,7 @@
             placeholder="请输入数量"
           />
         </div>
-        <div class="title3" @click="getMaxNumber(2)">最大值</div>
+        <div class="title3" @click="getMaxNumber()">最大值</div>
         <div class="buttonBox">
           <button class="confimBtn" @click="confimBtn()">授权</button>
           <button
@@ -141,11 +141,13 @@ export default {
       precision: '', //精度
       raddress: '', //推荐人地址
       addressAll: '', //钱包地址
+      usdtState: '',
+      pizState: '',
     }
   },
   created() {
     this.getStatsMsg()
-    this.getPizNumber(1)
+    this.getPizNumber()
     this.hendleWalletBtn()
   },
   methods: {
@@ -163,14 +165,15 @@ export default {
       const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
       const contractInstance = this.contractWebEth(this.abi, this.address)
-      contractInstance.methods
+      await contractInstance.methods
         .getStats(newAccounts)
         .call()
         .then((res) => {
+          console.log('resstates', res)
           this.raddress = res.referer
           this.state = res.stats[0]
           this.state0 = res.stats[1] / Math.pow(10, 18)
-          this.state1 = res.stats[1] / Math.pow(10, 6)
+          this.state0 = this.state0.toFixed(2)
           this.state3 = res.stats[3] / Math.pow(10, 18)
           this.state3 = this.state3.toFixed(2)
           this.state4 = res.stats[4]
@@ -181,11 +184,19 @@ export default {
             this.flagRegister = true
           }
         })
-        .catch((err) => {
-          console.log(err)
-          // this.$message.error('')
-        })
+      this.usdtState = await contractInstance.methods
+        .getUsdt(this.state0)
+        .call()
+      this.pizState = await contractInstance.methods.getPiz(this.state0).call()
     },
+
+    // 获得的数据转piz
+    // async handelGetPiz() {
+    //   const accounts = await this.getAccounts()
+    //   const newAccounts = accounts[0]
+    //   const contractInstance = this.contractWebEth(this.abi, this.address)
+    //   await contractInstance.methods
+    // },
     handlePledge() {
       this.dialogVisible = true
       this.pizNumber = ''
@@ -283,7 +294,7 @@ export default {
       const newAccounts = accounts[0]
       const contractInstance = this.contractWebEth(this.abi, this.address)
       await contractInstance.methods
-        .register('0x96f673ef8C7584ad53cC9fc3Dbc281965fbFe6A4')
+        .register(this.raddress)
         .send({ from: newAccounts })
         .then((res) => {
           console.log('resres', res)

@@ -12,7 +12,7 @@
       </div>
       <div class="right">
         <div class="box1">{{ number2 }}</div>
-        <div class="box2">PIZ已质押</div>
+        <div class="box2">BUSD-PIZ/LP已质押</div>
         <div class="box3">
           <button @click="handlePizdig()">质押</button>
         </div>
@@ -63,7 +63,7 @@ export default {
       fullscreenLoading: false, //置灰开关
       flag: false,
       dialogVisible: false,
-      address1: this.$store.state.adsTest, //测试piz地址
+      address1: '', //测试piz地址
       abi1: this.$store.state.abiTest, //测试地址abi
       address: this.$store.state.adsFarm, //农场合约地址
       abi: this.$store.state.abiFarm, //农场合约合约地址abi

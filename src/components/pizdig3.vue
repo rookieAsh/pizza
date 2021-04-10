@@ -12,7 +12,7 @@
       </div>
       <div class="right">
         <div class="box1">{{ number2 }}</div>
-        <div class="box2">PIZ已质押</div>
+        <div class="box2">BUSD-PIZ/LP已质押</div>
         <div class="box3">
           <button @click="handlePizdig()">质押</button>
         </div>
@@ -69,7 +69,8 @@ export default {
       fullscreenLoading: false, //置灰开关
       flag: false,
       dialogVisible: false,
-      address1: this.$store.state.adsTest, //测试piz地址
+      address1: '', //测试池子里面代码地址
+      pizAddress: '0x116f88f48da8da893bc390564d430d918eb0412e', //piz地址
       abi1: this.$store.state.abiTest, //测试地址abi
       address: this.$store.state.adsFarm, //农场合约地址
       abi: this.$store.state.abiFarm, //农场合约合约地址abi
@@ -78,7 +79,8 @@ export default {
       number2: '',
       number3: '',
       pizNumber: '',
-      precision: '', //精度
+      precision: '', //代币精度
+      precisionPiz: '', //piz精度
     }
   },
   created() {
@@ -100,10 +102,8 @@ export default {
       this.dialogVisible = false
       this.pizNumber = ''
     },
-    // 获得piz地址
+    // 获得池子里面代币地址
     async getPizAaddress() {
-      const accounts = await this.getAccounts()
-      const newAccounts = accounts[0]
       const contractInstance = this.contractWebEth(this.abi, this.address)
       await contractInstance.methods
         .pools(this.pid)
@@ -134,11 +134,8 @@ export default {
           this.pizNumber = res / Math.pow(10, this.precision)
         })
     },
-    // 先获取精度
+    // 先获取池子代币精度
     async getPrecision() {
-      console.log('this.precision', this.precision)
-      const accounts = await this.getAccounts()
-      const newAccounts = accounts[0]
       const contractInstance = this.contractWebEth(this.abi1, this.address1)
       await contractInstance.methods
         .decimals()
@@ -147,24 +144,27 @@ export default {
           this.precision = res
         })
     },
-    // 获得可用piz
-    async getPizNumber() {
-      console.log('this.precision', this.precision)
-      const accounts = await this.getAccounts()
-      const newAccounts = accounts[0]
-      const contractInstance = this.contractWebEth(this.abi1, this.address1)
+    //获得piz精度
+    async getPizPrecision() {
+      const contractInstance = this.contractWebEth(this.abi1, this.pizAddress)
       await contractInstance.methods
         .decimals()
         .call()
         .then((res) => {
-          this.precision = res
+          this.precisionPiz = res
         })
+    },
+    // 获得可用piz
+    async getPizNumber() {
+      this.getPizPrecision()
+      const accounts = await this.getAccounts()
+      const newAccounts = accounts[0]
+      const contractInstance = this.contractWebEth(this.abi1, this.address1)
       await contractInstance.methods
         .balanceOf(newAccounts)
         .call()
         .then((res) => {
-          console.log(res)
-          this.number3 = res / Math.pow(10, this.precision)
+          this.number3 = res / Math.pow(10, this.precisionPiz)
           this.number3 = this.number3.toFixed(2)
           console.log(this.number3)
         })
@@ -220,9 +220,7 @@ export default {
             this.pizInput = ''
             this.dialogVisible = false
             this.fullscreenLoading = false
-            this.getDateNum2()
-            this.getDateNum1()
-            this.getPizNumber()
+            this.getPizAaddress()
           }
         })
         .catch((err) => {

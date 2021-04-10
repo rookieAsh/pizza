@@ -388,7 +388,7 @@ export default {
   created() {
     this.$store.commit('instance')
     this.hendleWalletBtn()
-    this.dataRefreh()
+    // this.dataRefreh()
     this.getStatsMsg()
   },
   methods: {
@@ -467,15 +467,15 @@ export default {
     // 在页面销毁后，清除计时器
     this.clear()
   },
-  watch: {
-    addressAll: {
-      handler(newVal, objVal) {
-        if (newVal != objVal) {
-          this.$router.push('/family')
-        }
-      },
-    },
-  },
+  // watch: {
+  //   addressAll: {
+  //     handler(newVal, objVal) {
+  //       if (newVal != objVal) {
+  //         this.$router.push('/family')
+  //       }
+  //     },
+  //   },
+  // },
 }
 </script>
 <style lang="scss">
