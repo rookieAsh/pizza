@@ -31,10 +31,10 @@
               :key="key"
               :index="'/' + items.path"
               class="elmenuitem"
-              @click="handleClick(1111)"
+              @click="handleClick()"
             >
-              <img class="imgNav" :src="items.icon" />
-              <span>{{ items.authName }}</span>
+              <!-- <img class="imgNav" :src="items.icon" /> -->
+              <span style="margin-left: 25px">{{ items.authName }}</span>
             </el-menu-item>
           </el-submenu>
           <el-menu-item
@@ -49,7 +49,9 @@
         </template>
         <div class="invite" v-if="userState != 0">
           <img src="../assets/image/home/invite.png" alt="" />
-          <span v-show="!isCollapse" @click="inviteBtn('copy1')">邀请链接</span>
+          <span v-show="!isCollapse" @click="inviteBtn('copy1')">{{
+            $t('lang.inviteConnect')
+          }}</span>
         </div>
         <div
           class="yaoqing1"
@@ -60,7 +62,6 @@
         </div>
       </el-menu>
     </el-aside>
-
     <el-container>
       <el-header class="headerBtn">
         <div class="headerContent">
@@ -265,10 +266,11 @@
                 <el-menu-item
                   v-for="(items, key) in item.children"
                   :key="key"
-                  :index="'/' + items.path"
                   class="elmenuitem"
                 >
-                  <span>{{ items.authName }}</span>
+                  <a href="http://pizswap.com/pizswap/#/swap">
+                    <span class="spanSwap">{{ items.authName }}</span></a
+                  >
                 </el-menu-item>
               </el-submenu>
               <el-menu-item
@@ -288,7 +290,7 @@
               >
             </div>
             <div class="yaoqing1" id="copy2">
-              http://192.168.2.5:8080/#/farm?{{ this.addressAll }}
+              http://pizswap.com/#/farm?{{ this.addressAll }}
             </div>
           </van-popup>
         </el-menu>
@@ -311,8 +313,12 @@ import img3 from '../assets/image/home/img3.png'
 import img4 from '../assets/image/home/img4.png'
 import invite from '../assets/image/home/invite.png'
 import { mapActions } from 'vuex'
+import Child from '../components/trading'
 export default {
   mixins: [fun],
+  components: {
+    child: Child,
+  },
   data() {
     return {
       userState: '',
@@ -321,63 +327,8 @@ export default {
       show: false,
       drawer: false,
       direction: 'ltr',
-      isCollapse: false,
+      isCollapse: this.$store.state.isCollapse,
       isCollapsePhone: false,
-      menulist: [
-        {
-          authName: '家',
-          id: 'family',
-          path: 'family',
-          key: 1,
-          icon: img1,
-          children: [],
-        },
-        {
-          authName: '贸易',
-          id: 'trade',
-          path: 'trade',
-          icon: img2,
-          key: 3,
-          children: [
-            {
-              authName: '兑换',
-              id: 'trading',
-              path: 'trading',
-              key: 31,
-            },
-            // {
-            //   authName: '流动性',
-            //   id: 'liquidity',
-            //   path: 'liquidity',
-            //   key: 32,
-            // },
-          ],
-        },
-        {
-          authName: '农场',
-          id: 'farm',
-          path: 'farm',
-          icon: img3,
-          key: 4,
-          children: [],
-        },
-        {
-          authName: '城堡',
-          id: 'castle',
-          path: 'castle',
-          icon: img4,
-          key: 5,
-          children: [],
-        },
-        // {
-        //   authName: '邀请链接',
-        //   id: 'invite',
-        //   path: 'invite',
-        //   icon: invite,
-        //   key: 6,
-        //   children: [],
-        // },
-      ],
       addressCastle: this.$store.state.adsCastle, //城堡合约
       // 城堡合约地址abi
       abi: this.$store.state.abiCastle,
@@ -385,12 +336,18 @@ export default {
       intervalId: null,
     }
   },
+
   created() {
     this.$store.commit('instance')
-    this.hendleWalletBtn()
-    // this.dataRefreh()
+    this.dataRefreh()
     this.getStatsMsg()
+    // setTimeout(function chechAuth() {
+    //   console.log(ethereum.selectedAddress)
+    //   if (ethereum.selectedAddress === null) setTimeout(chechAuth, 200)
+    //   else this.addressAll = ethereum.selectedAddress
+    // }, 200)
   },
+
   methods: {
     //定时器
     dataRefreh() {
@@ -402,7 +359,7 @@ export default {
       this.intervalId = setInterval(() => {
         this.hendleWalletBtn() //加载数据函数
         this.getStatsMsg()
-      }, 3000)
+      }, 1000)
     },
     // 停止定时器
     clear() {
@@ -411,6 +368,7 @@ export default {
     },
     isCollapseClick() {
       this.isCollapse = !this.isCollapse
+      this.$store.commit('updateIsCollapse', this.isCollapse)
     },
     isCollapseClickPhone() {
       this.isCollapsePhone = !this.isCollapsePhone
@@ -419,17 +377,11 @@ export default {
       this.$i18n.locale = command
     },
     async hendleWalletBtn() {
-      if (typeof window.ethereum !== 'undefined') {
-        console.log('MetaMask is installed!')
-      }
       const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
-      console.log(accounts)
       this.addressAll = accounts[0]
-      this.address = accounts[0].slice(0, 8) + '...'
+      this.address = this.addressAll.slice(0, 8) + '...'
     },
-    handleClick(val) {
-      console.log(val)
-    },
+    handleClick() {},
     // 复制邀请链接
     invite(copy) {
       const range = document.createRange()
@@ -450,16 +402,12 @@ export default {
     async getStatsMsg() {
       const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
-      console.log('newAccounts', newAccounts)
       const contractInstance = this.contractWebEth(this.abi, this.addressCastle)
       const res = contractInstance.methods
         .getStats(newAccounts)
         .call()
         .then((res) => {
-          this.userState = res.stats[0]
-        })
-        .catch((err) => {
-          console.log('err', err)
+          this.userState = res.usdtstats[0]
         })
     },
   },
@@ -467,15 +415,61 @@ export default {
     // 在页面销毁后，清除计时器
     this.clear()
   },
-  // watch: {
-  //   addressAll: {
-  //     handler(newVal, objVal) {
-  //       if (newVal != objVal) {
-  //         this.$router.push('/family')
-  //       }
-  //     },
-  //   },
-  // },
+  watch: {
+    // address: {
+    // handler(newVal, objVal) {
+    //   if (newVal != objVal) {
+    //     this.hendleWalletBtn()
+    //   }
+    // },
+    // },
+  },
+  computed: {
+    menulist() {
+      return [
+        {
+          authName: this.$t('lang.home'),
+          id: 'family',
+          path: 'family',
+          key: 1,
+          icon: img1,
+          children: [],
+        },
+        {
+          authName: this.$t('lang.trade'),
+          id: 'trade',
+          path: 'trade',
+          icon: img2,
+          key: 3,
+          children: [
+            {
+              authName: this.$t('lang.exchange'),
+              id: 'trading',
+              path: 'trading',
+              icon: img2,
+              key: 31,
+            },
+          ],
+        },
+        {
+          authName: this.$t('lang.farm'),
+          id: 'farm',
+          path: 'farm',
+          icon: img3,
+          key: 4,
+          children: [],
+        },
+        {
+          authName: this.$t('lang.castle'),
+          id: 'castle',
+          path: 'castle',
+          icon: img4,
+          key: 5,
+          children: [],
+        },
+      ]
+    },
+  },
 }
 </script>
 <style lang="scss">
@@ -663,6 +657,12 @@ export default {
   }
 }
 @media screen and (max-width: 767px) {
+  a:link {
+    color: #71c8ff;
+  }
+  a {
+    color: #303133;
+  }
   .headerBtnPhone {
     height: 40px !important;
     border-bottom: 1px solid #efefef;
@@ -722,8 +722,14 @@ export default {
         .vanPopup {
           width: 200px;
           border: none;
-          position: fixed;
-          top: 373px;
+          // position: fixed;
+          // top: 373px;
+          .elmenuitem {
+            .spanSwap {
+              display: inline-block;
+              margin-left: 25px;
+            }
+          }
           .invite {
             height: 30px;
             margin-top: 10px;

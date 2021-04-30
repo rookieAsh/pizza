@@ -10,15 +10,15 @@
         <div class="leftBtn">
           <button class="downBtn">
             <div class="downBtn1">
-              <span>下载</span>
+              <span>{{ $t('lang.download') }}</span>
               <img src="../assets/image/home/img11.png" alt="" />
             </div>
           </button>
-          <button class="white">白皮书</button>
+          <button class="white">{{ $t('lang.whitePaper') }}</button>
           <!-- <button class="register" @click="registerBtn">注册</button> -->
         </div>
         <div class="footerMsg">
-          <div>官方消息</div>
+          <div>{{ $t('lang.officialNews') }}</div>
           <div class="middle">|</div>
           <div class="footerNew">
             <div>
@@ -108,6 +108,9 @@ export default {
           display: flex;
           justify-content: center;
           align-items: center;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
           span {
             margin-right: 5px;
           }
@@ -207,9 +210,14 @@ export default {
             border: none;
             outline: none;
           }
-          .downBtn1 img {
-            width: 12px;
-            height: 12px;
+          .downBtn1 {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            img {
+              width: 12px;
+              height: 12px;
+            }
           }
         }
         .rightPhone img {

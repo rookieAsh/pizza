@@ -2,65 +2,93 @@
   <div class="container">
     <div class="content">
       <div class="title">
-        <div class="titleMsg">农场</div>
-        <p class="titleNav">筹集流动资金池（LP）代币以赚取收益</p>
+        <div class="titleMsg">{{ $t('lang.farm') }}</div>
+        <p class="titleNav">
+          {{ $t('lang.raise') }}（LP）{{ $t('lang.earnProfit') }}
+        </p>
       </div>
       <div class="mainContent" v-if="flag">
         <div class="submenu">
           <div class="img1">
             <img src="../assets/image/farm/img4.png" alt="" />
           </div>
-          <div class="tab">PIZ 质押挖矿</div>
+          <div class="tab">PIZ {{ $t('lang.pledgeToDig') }}</div>
           <div class="msg">
-            <div>存入PIZ</div>
-            <div>获取PIZ</div>
+            <div>{{ $t('lang.deposit') }}PIZ</div>
+            <div>{{ $t('lang.obtain') }}PIZ</div>
           </div>
           <div>
-            <button @click="handlePizdig(0)">选择</button>
+            <button @click="handlePizdig(0)">{{ $t('lang.choose') }}</button>
+          </div>
+          <div class="footer">
+            <div class="div1">
+              {{ $t('lang.annualInterestRate') }}：{{ annualInterestRate0 }}
+            </div>
+            <div class="div2">{{ $t('lang.dailyProduction') }}：35000PIZ</div>
           </div>
         </div>
         <div class="submenu">
           <div class="img">
             <img src="../assets/image/farm/img1.png" alt="" />
           </div>
-          <div class="tab">USDT-PIZ/LP 质押挖矿</div>
+          <div class="tab">USDT-PIZ/LP {{ $t('lang.pledgeToDig') }}</div>
           <div class="msg">
-            <div>存入PIZ</div>
-            <div>获取PIZ</div>
+            <div>{{ $t('lang.deposit') }}USDT-PIZ</div>
+            <div>{{ $t('lang.obtain') }}PIZ</div>
           </div>
           <div>
-            <button @click="handlePizdig1(1)">选择</button>
+            <button @click="handlePizdig1(1)">{{ $t('lang.choose') }}</button>
+          </div>
+          <div class="footer">
+            <div class="div1">
+              {{ $t('lang.annualInterestRate') }}：{{ annualInterestRate1 }}
+            </div>
+            <div class="div2">{{ $t('lang.dailyProduction') }}：35000PIZ</div>
           </div>
         </div>
         <div class="submenu">
           <div class="img">
             <img src="../assets/image/farm/img3.png" alt="" />
           </div>
-          <div class="tab">BNB-PIZ/LP 质押挖矿</div>
+          <div class="tab">BUSD-PIZ/LP {{ $t('lang.pledgeToDig') }}</div>
           <div class="msg">
-            <div>存入PIZ</div>
-            <div>获取PIZ</div>
+            <div>{{ $t('lang.deposit') }}BUSD-PIZ</div>
+            <div>{{ $t('lang.obtain') }}PIZ</div>
           </div>
           <div>
-            <button @click="handlePizdig2(2)">选择</button>
+            <button @click="handlePizdig2(2)">{{ $t('lang.choose') }}</button>
+          </div>
+          <div class="footer">
+            <div class="div1">
+              {{ $t('lang.annualInterestRate') }}：{{ annualInterestRate2 }}
+            </div>
+            <div class="div2">{{ $t('lang.dailyProduction') }}：35000PIZ</div>
           </div>
         </div>
         <div class="submenu">
           <div class="img">
             <img src="../assets/image/farm/img2.png" alt="" />
           </div>
-          <div class="tab">BNB-PIZ/LP 质押挖矿</div>
+          <div class="tab">BNB-PIZ/LP {{ $t('lang.pledgeToDig') }}</div>
           <div class="msg">
-            <div>存入PIZ</div>
-            <div>获取PIZ</div>
+            <div>{{ $t('lang.deposit') }}BNB-PIZ</div>
+            <div>{{ $t('lang.obtain') }}PIZ</div>
           </div>
           <div>
-            <button @click="handlePizdig3(3)">选择</button>
+            <button @click="handlePizdig3(3)">{{ $t('lang.choose') }}</button>
+          </div>
+          <div class="footer">
+            <div class="div1">
+              {{ $t('lang.annualInterestRate') }}：{{ annualInterestRate3 }}
+            </div>
+            <div class="div2">{{ $t('lang.dailyProduction') }}：35000PIZ</div>
           </div>
         </div>
       </div>
       <div class="registerBtn" v-if="!flag">
-        <div class="register" @click="handleRegister">注册</div>
+        <div class="register" @click="handleRegister">
+          {{ $t('lang.registered') }}
+        </div>
       </div>
     </div>
   </div>
@@ -77,16 +105,42 @@ export default {
       flag: false,
       state: '',
       dialogVisible: false,
+      pizAddress: '0x116f88f48da8da893bc390564d430d918eb0412e', //piz地址
+      pizAbi: this.$store.state.abiTest, //测试地址abi
       address: this.$store.state.adsCastle, //城堡合约
       abi: this.$store.state.abiCastle, // 城堡合约地址abi
+      addressFarm: this.$store.state.adsFarm, //农场合约地址
+      abiFarm: this.$store.state.abiFarm, //农场合约合约地址abi
+      abiTest: this.$store.state.abiTest, //测试地址abi
       raddress: '', //推荐人地址
       addressAll: '', //钱包地址
+      addressLpToken0: '', //池子地址
+      balance0: '', //余额
+      balanceToPiz0: '', //余额转piz
+      annualInterestRate0: '', //年化利率
+      addressLpToken1: '',
+      balance1: '',
+      balanceToPiz1: '',
+      annualInterestRate1: '',
+      addressLpToken2: '',
+      balance2: '',
+      balanceToPiz2: '',
+      annualInterestRate2: '',
+      addressLpToken3: '',
+      balance3: '',
+      balanceToPiz3: '',
+      annualInterestRate3: '',
+      precisionPiz: '', //piz精度
     }
   },
   created() {
     this.$store.commit('instance')
     this.getStatsMsg()
     this.hendleWalletBtn()
+    this.getAnnualInterestRate0()
+    this.getAnnualInterestRate1()
+    this.getAnnualInterestRate2()
+    this.getAnnualInterestRate3()
   },
   mounted() {
     this.inviter = location.hash.slice(7)
@@ -109,225 +163,7 @@ export default {
     handlePizdig3(pid) {
       this.$router.push({ path: 'pizdig3', query: { key: pid } })
     },
-    async instances() {
-      const abi = [
-        {
-          entrys: [
-            {
-              inputs: [{ name: '_pipe', type: 'address' }],
-              stateMutability: 'Nonpayable',
-              type: 'Constructor',
-            },
-            {
-              inputs: [
-                { indexed: true, name: 'previousOwner', type: 'address' },
-                { indexed: true, name: 'newOwner', type: 'address' },
-              ],
-              name: 'OwnershipTransferred',
-              type: 'Event',
-            },
-            {
-              inputs: [
-                { name: '_rewardRate', type: 'uint256' },
-                { name: '_lpToken', type: 'address' },
-              ],
-              name: 'add',
-              stateMutability: 'Nonpayable',
-              type: 'Function',
-            },
-            {
-              name: 'claimOwnership',
-              stateMutability: 'Nonpayable',
-              type: 'Function',
-            },
-            {
-              outputs: [{ type: 'uint256' }],
-              constant: true,
-              inputs: [
-                { name: 'account', type: 'address' },
-                { name: 'pid', type: 'uint256' },
-              ],
-              name: 'earned',
-              stateMutability: 'View',
-              type: 'Function',
-            },
-            {
-              inputs: [{ name: 'pid', type: 'uint256' }],
-              name: 'exit',
-              stateMutability: 'Nonpayable',
-              type: 'Function',
-            },
-            {
-              outputs: [{ type: 'uint256' }],
-              constant: true,
-              name: 'finsishtime',
-              stateMutability: 'View',
-              type: 'Function',
-            },
-            {
-              outputs: [{ type: 'bool' }],
-              constant: true,
-              inputs: [{ name: 'uaddress', type: 'address' }],
-              name: 'isUserExists',
-              stateMutability: 'View',
-              type: 'Function',
-            },
-            {
-              outputs: [{ type: 'address' }],
-              constant: true,
-              name: 'owner',
-              stateMutability: 'View',
-              type: 'Function',
-            },
-            {
-              outputs: [{ type: 'address' }],
-              constant: true,
-              name: 'pendingOwner',
-              stateMutability: 'View',
-              type: 'Function',
-            },
-            {
-              outputs: [{ type: 'uint256' }],
-              constant: true,
-              name: 'periodFinish',
-              stateMutability: 'View',
-              type: 'Function',
-            },
-            {
-              outputs: [{ type: 'address' }],
-              constant: true,
-              name: 'pipe',
-              stateMutability: 'View',
-              type: 'Function',
-            },
-            {
-              outputs: [
-                { name: 'lpToken', type: 'address' },
-                { name: 'rewardRate', type: 'uint256' },
-                { name: 'updateTime', type: 'uint256' },
-                { name: 'perTokenStored', type: 'uint256' },
-              ],
-              constant: true,
-              inputs: [{ type: 'uint256' }],
-              name: 'poolInfo',
-              stateMutability: 'View',
-              type: 'Function',
-            },
-            {
-              outputs: [{ type: 'uint256' }],
-              constant: true,
-              name: 'poolLength',
-              stateMutability: 'View',
-              type: 'Function',
-            },
-            {
-              outputs: [{ type: 'uint256' }],
-              inputs: [{ name: 'pid', type: 'uint256' }],
-              name: 'reap',
-              stateMutability: 'Nonpayable',
-              type: 'Function',
-            },
-            {
-              inputs: [{ name: 'raddress', type: 'address' }],
-              name: 'register',
-              stateMutability: 'Nonpayable',
-              type: 'Function',
-            },
-            {
-              outputs: [{ type: 'uint256' }],
-              constant: true,
-              inputs: [{ name: 'pid', type: 'uint256' }],
-              name: 'rewardPerToken',
-              stateMutability: 'View',
-              type: 'Function',
-            },
-            {
-              inputs: [
-                { name: '_pid', type: 'uint256' },
-                { name: '_rewardRate', type: 'uint256' },
-              ],
-              name: 'set',
-              stateMutability: 'Nonpayable',
-              type: 'Function',
-            },
-            {
-              inputs: [
-                { name: 'amount', type: 'uint256' },
-                { name: 'pid', type: 'uint256' },
-              ],
-              name: 'stake',
-              stateMutability: 'Nonpayable',
-              type: 'Function',
-            },
-            {
-              outputs: [
-                { name: 'amount', type: 'uint256' },
-                { name: 'yieldRate', type: 'uint256' },
-                { name: 'reward', type: 'uint256' },
-              ],
-              constant: true,
-              inputs: [{ type: 'uint256' }, { type: 'address' }],
-              name: 'stakeInfos',
-              stateMutability: 'View',
-              type: 'Function',
-            },
-            {
-              inputs: [
-                { name: 'newOwner', type: 'address' },
-                { name: 'direct', type: 'bool' },
-                { name: 'renounce', type: 'bool' },
-              ],
-              name: 'transferOwnership',
-              stateMutability: 'Nonpayable',
-              type: 'Function',
-            },
-            {
-              outputs: [{ type: 'address' }],
-              constant: true,
-              inputs: [{ type: 'uint256' }],
-              name: 'uids',
-              stateMutability: 'View',
-              type: 'Function',
-            },
-            {
-              outputs: [{ type: 'uint256' }],
-              constant: true,
-              name: 'userCounter',
-              stateMutability: 'View',
-              type: 'Function',
-            },
-            {
-              outputs: [
-                { name: 'id', type: 'uint256' },
-                { name: 'teamMass', type: 'uint256' },
-                { name: 'referrals', type: 'uint256' },
-                { name: 'teamMax', type: 'uint256' },
-                { name: 'partners', type: 'uint256' },
-                { name: 'referer', type: 'address' },
-              ],
-              constant: true,
-              inputs: [{ type: 'address' }],
-              name: 'users',
-              stateMutability: 'View',
-              type: 'Function',
-            },
-            {
-              inputs: [
-                { name: 'amount', type: 'uint256' },
-                { name: 'pid', type: 'uint256' },
-              ],
-              name: 'withdraw',
-              stateMutability: 'Nonpayable',
-              type: 'Function',
-            },
-          ],
-        },
-      ]
-      const contract = web3.eth.contract(abi)
-      this.myContract = contract.at(
-        '0x8F5715B7e6F00282a49e309D0fFf27DcdE4c6ca0'
-      )
-    },
+
     async getStatsMsg() {
       const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
@@ -338,7 +174,7 @@ export default {
         .then((res) => {
           console.log(res.stats)
           this.raddress = res.referer
-          this.state = res.stats[0]
+          this.state = res.usdtstats[0]
           console.log('this.state', this.state)
           if (this.state != 0) {
             this.flag = true
@@ -368,12 +204,216 @@ export default {
         .register(this.inviter)
         .send({ from: newAccounts })
         .then((res) => {
-          this.$message.success('注册成功')
+          this.$message.success(this.$t('lang.RegisteredSuc'))
           console.log(res)
         })
         .catch((err) => {
           console.log('errerr', err)
         })
+    },
+    // 获得年利率
+    // 获得池子地址LpToken
+    // 然后得到代币余额 转piz
+    // 最后计算得{{ $t('lang.annualInterestRate') }}
+    async getAnnualInterestRate0() {
+      const accounts = await this.getAccounts()
+      const newAccounts = accounts[0]
+      const contractInstance = this.contractWebEth(
+        this.abiFarm,
+        this.addressFarm
+      )
+      await contractInstance.methods
+        .pools('0')
+        .call()
+        .then((res) => {
+          this.addressLpToken0 = res.lpToken
+        })
+      const contractInstances = this.contractWebEth(
+        this.abiTest,
+        this.addressLpToken0
+      )
+      await contractInstances.methods
+        .balanceOf(this.addressFarm)
+        .call()
+        .then((res) => {
+          this.balance0 = res
+        })
+      const contractInstanceCastle = this.contractWebEth(this.abi, this.address)
+      await contractInstanceCastle.methods
+        .getPiz('0', this.balance0)
+        .call()
+        .then((res) => {
+          this.balanceToPiz0 = res
+          console.log('this.balanceToPiz0', this.balanceToPiz0)
+        })
+      const contractInstancePiz = this.contractWebEth(
+        this.pizAbi,
+        this.pizAddress
+      )
+      await contractInstancePiz.methods
+        .decimals()
+        .call()
+        .then((res) => {
+          this.precisionPiz = res
+        })
+      this.annualInterestRate0 =
+        (3500 * 365 * 100 * Math.pow(10, this.precisionPiz)) /
+        this.balanceToPiz0
+      console.log(this.annualInterestRate0)
+      this.annualInterestRate0 =
+        Math.floor(this.annualInterestRate0 * 100) / 100 + '%'
+      console.log('this.annualInterestRate0', this.annualInterestRate0)
+    },
+
+    async getAnnualInterestRate1() {
+      const accounts = await this.getAccounts()
+      const newAccounts = accounts[0]
+      const contractInstance = this.contractWebEth(
+        this.abiFarm,
+        this.addressFarm
+      )
+      await contractInstance.methods
+        .pools('1')
+        .call()
+        .then((res) => {
+          this.addressLpToken1 = res.lpToken
+        })
+      const contractInstances = this.contractWebEth(
+        this.abiTest,
+        this.addressLpToken1
+      )
+      await contractInstances.methods
+        .balanceOf(this.addressFarm)
+        .call()
+        .then((res) => {
+          this.balance1 = res
+        })
+      const contractInstanceCastle = this.contractWebEth(this.abi, this.address)
+      await contractInstanceCastle.methods
+        .getPiz('1', this.balance1)
+        .call()
+        .then((res) => {
+          this.balanceToPiz1 = res
+        })
+      const contractInstancePiz = this.contractWebEth(
+        this.pizAbi,
+        this.pizAddress
+      )
+      await contractInstancePiz.methods
+        .decimals()
+        .call()
+        .then((res) => {
+          this.precisionPiz = res
+        })
+      this.annualInterestRate1 =
+        (3500 * 365 * 100 * Math.pow(10, this.precisionPiz)) /
+        this.balanceToPiz1
+      this.annualInterestRate1 =
+        Math.floor(this.annualInterestRate1 * 100) / 100 + '%'
+      console.log('this.annualInterestRate1', this.annualInterestRate1)
+    },
+
+    async getAnnualInterestRate2() {
+      const accounts = await this.getAccounts()
+      const newAccounts = accounts[0]
+      const contractInstance = this.contractWebEth(
+        this.abiFarm,
+        this.addressFarm
+      )
+      await contractInstance.methods
+        .pools('2')
+        .call()
+        .then((res) => {
+          this.addressLpToken2 = res.lpToken
+        })
+      const contractInstances = this.contractWebEth(
+        this.abiTest,
+        this.addressLpToken2
+      )
+      await contractInstances.methods
+        .balanceOf(this.addressFarm)
+        .call()
+        .then((res) => {
+          this.balance2 = res
+        })
+      const contractInstanceCastle = this.contractWebEth(this.abi, this.address)
+      await contractInstanceCastle.methods
+        .getPiz('2', this.balance2)
+        .call()
+        .then((res) => {
+          this.balanceToPiz2 = res
+        })
+      if (this.balanceToPiz2 == 0) {
+        this.annualInterestRate2 = ' ∞ '
+      } else {
+        const contractInstancePiz = this.contractWebEth(
+          this.pizAbi,
+          this.pizAddress
+        )
+        await contractInstancePiz.methods
+          .decimals()
+          .call()
+          .then((res) => {
+            this.precisionPiz = res
+          })
+
+        this.annualInterestRate2 =
+          (35000 * 365 * 100 * Math.pow(10, this.precisionPiz)) /
+          this.balanceToPiz2
+        console.log(this.annualInterestRate2)
+        this.annualInterestRate2 =
+          Math.floor(this.annualInterestRate2 * 100) / 100 + '%'
+        console.log('this.annualInterestRate1', this.annualInterestRate2)
+      }
+    },
+
+    async getAnnualInterestRate3() {
+      const accounts = await this.getAccounts()
+      const newAccounts = accounts[0]
+      const contractInstance = this.contractWebEth(
+        this.abiFarm,
+        this.addressFarm
+      )
+      await contractInstance.methods
+        .pools('3')
+        .call()
+        .then((res) => {
+          this.addressLpToken3 = res.lpToken
+        })
+      const contractInstances = this.contractWebEth(
+        this.abiTest,
+        this.addressLpToken3
+      )
+      await contractInstances.methods
+        .balanceOf(this.addressFarm)
+        .call()
+        .then((res) => {
+          this.balance3 = res
+        })
+      const contractInstanceCastle = this.contractWebEth(this.abi, this.address)
+      await contractInstanceCastle.methods
+        .getPiz('3', this.balance3)
+        .call()
+        .then((res) => {
+          this.balanceToPiz3 = res
+        })
+      const contractInstancePiz = this.contractWebEth(
+        this.pizAbi,
+        this.pizAddress
+      )
+      await contractInstancePiz.methods
+        .decimals()
+        .call()
+        .then((res) => {
+          this.precisionPiz = res
+        })
+      this.annualInterestRate3 =
+        (35000 * 365 * 100 * Math.pow(10, this.precisionPiz)) /
+        this.balanceToPiz3
+      console.log(this.annualInterestRate3)
+      this.annualInterestRate3 =
+        Math.floor(this.annualInterestRate3 * 100) / 100 + '%'
+      console.log('this.annualInterestRate3', this.annualInterestRate3)
     },
   },
 }
@@ -410,7 +450,7 @@ export default {
       flex-wrap: wrap;
       .submenu {
         width: 380px;
-        height: 316px;
+        height: 400px;
         margin: 0 20px 20px 0;
         text-align: center;
         border-radius: 20px;
@@ -433,6 +473,9 @@ export default {
           font-weight: bold;
           margin: 26px 0 12px 0;
           color: #000000;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
         .msg {
           margin: 0 0 34px 0;
@@ -440,6 +483,19 @@ export default {
           font-family: PingFang-SC-Regular, PingFang-SC;
           font-weight: 400;
           color: #666666;
+        }
+        .footer {
+          margin: 30px 0 0 0;
+          font-size: 18px;
+          color: #666666;
+          .div1 {
+            height: 30px;
+            line-height: 30px;
+          }
+          .div2 {
+            height: 30px;
+            line-height: 30px;
+          }
         }
       }
       button {
@@ -595,9 +651,8 @@ export default {
           margin: 0 0 20px 0;
           // margin: auto;
           width: 216px;
-          height: 223px;
+          height: 256px;
           padding: 25px;
-
           .img1 {
             width: 73px;
             height: 73px;
@@ -626,6 +681,19 @@ export default {
             width: 137px;
             height: 40px;
             font-size: 14px;
+          }
+          .footer {
+            margin: 16px 0 0 0;
+            font-size: 12px;
+            color: #666666;
+            .div1 {
+              height: 16px;
+              line-height: 16px;
+            }
+            .div2 {
+              height: 16px;
+              line-height: 16px;
+            }
           }
         }
       }

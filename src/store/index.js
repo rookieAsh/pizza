@@ -6,8 +6,9 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     address: '',
+    isCollapse: false,
     addressAll: '',
-    adsFarm: '0xd1f51799fd91De9b6D2cD5a56CCCa50FcB8213D6', //农场合约地址
+    adsFarm: '0x31eB8B7E20BEa9189CF32ef3DdA1f17C57B8cFc2', //农场合约地址
     //农场合约地址abi
     abiFarm: [
       {
@@ -276,7 +277,7 @@ export default new Vuex.Store({
         type: 'function',
       },
     ],
-    adsCastle: '0x64567b2945050b99aD865c1D861a1518D8F59fCF', //城堡合约地址
+    adsCastle: '0x347D44f489D7b6AaFcc892Ea2Fb46527B55b4c1D', //城堡合约地址
     // 城堡abi
     abiCastle: [
       {
@@ -412,7 +413,8 @@ export default new Vuex.Store({
         ],
         name: 'getStats',
         outputs: [
-          { internalType: 'uint256[8]', name: 'stats', type: 'uint256[8]' },
+          { internalType: 'uint256[8]', name: 'usdtstats', type: 'uint256[8]' },
+          { internalType: 'uint256[8]', name: 'pizstats', type: 'uint256[8]' },
           { internalType: 'address', name: 'referer', type: 'address' },
         ],
         payable: false,
@@ -625,7 +627,7 @@ export default new Vuex.Store({
         type: 'function',
       },
     ],
-    adsTest: '0x116f88f48da8da893bc390564d430d918eb0412e', //测试PIZ地址
+    pizTest: '0x116f88f48da8da893bc390564d430d918eb0412e', //测试PIZ地址
     //测试PIZ地址abi
     abiTest: [
       {
@@ -827,6 +829,12 @@ export default new Vuex.Store({
           )
         )
       }
+    },
+    updateIsCollapse(state, msg) {
+      // state.isCollapse = msg
+      // console.log('3123213213333333', msg)
+      state.isCollapse = msg
+      console.log(state.isCollapse)
     },
   },
   actions: {},

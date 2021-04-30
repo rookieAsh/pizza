@@ -1,21 +1,30 @@
 <template>
   <div class="container">
     <div class="iframeBox">
+      <!-- http://pizswap.com/pizswap/#/swap -->
+      <!-- http://localhost:3000/#/swap -->
+      <!-- http://localhost:3001/#/swap -->
+      <!-- http://192.168.2.5:3001/#/swap -->
+      <!-- ./static/index.html -->
       <iframe
-        src="http://pizswap.com/pizswap/#/swap"
+        loading="eager"
+        src="static/index.html "
         id="mobsf"
         scrolling="no"
         frameborder="0"
         style="position: absolute"
+        :width="isCollapse ? '97%' : '86%'"
       ></iframe>
     </div>
   </div>
 </template>
 
 <script>
+// import url from '../swap/index.html'
 export default {
   data() {
     return {
+      flag: false,
       input: '',
       input1: '',
       num: '',
@@ -34,7 +43,7 @@ export default {
       const mobsf = document.getElementById('mobsf')
       const deviceWidth = document.body.clientWidth
       const deviceHeight = document.body.clientHeight
-      mobsf.style.width = Number(deviceWidth) - 240 + 'px' //数字是页面布局宽度差值
+      mobsf.style.width = Number(deviceWidth) - 250 + 'px' //数字是页面布局宽度差值
       mobsf.style.height = Number(deviceHeight) - 64 + 'px' //数字是页面布局高度差
     },
 
@@ -106,6 +115,11 @@ export default {
       this.chooseCionDialog = false
     },
   },
+  computed: {
+    isCollapse() {
+      return this.$store.state.isCollapse
+    },
+  },
 }
 </script>
 
@@ -114,8 +128,7 @@ export default {
   width: 100%;
   .iframeBox {
     iframe {
-      width: 88%;
-      height: 90%;
+      height: 88%;
     }
   }
   .content {
@@ -593,7 +606,7 @@ export default {
     .iframeBox {
       iframe {
         width: 100%;
-        height: 90%;
+        height: 91%;
       }
     }
     .content {

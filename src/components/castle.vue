@@ -1,75 +1,83 @@
 <template>
   <div class="container">
-    <div class="titleMsg">城堡</div>
-    <div class="titleNav">每日总产量1600000PIZ</div>
-    <div class="content" v-if="flagRegister">
+    <div class="titleMsg">{{ $t('lang.castle') }}</div>
+    <div class="titleNav">{{ $t('lang.dailyProduction') }} 160000 PIZ</div>
+    <div class="content">
       <div class="left">
         <div class="leftImg">
-          <img
-            v-if="state6 == 0"
-            src="../assets/image/castle/img0.png"
-            alt=""
-          />
-          <img
-            v-if="state6 == 1"
-            src="../assets/image/castle/img1.png"
-            alt=""
-          />
-          <img
-            v-if="state6 == 2"
-            src="../assets/image/castle/img2.png"
-            alt=""
-          />
-          <img
-            v-if="state6 == 3"
-            src="../assets/image/castle/img3.png"
-            alt=""
-          />
-          <img
-            v-if="state6 == 4"
-            src="../assets/image/castle/img4.png"
-            alt=""
-          />
-          <img
-            v-if="state6 == 5"
-            src="../assets/image/castle/img5.png"
-            alt=""
-          />
-          <img
-            v-if="state6 == 6"
-            src="../assets/image/castle/img6.png"
-            alt=""
-          />
-          <img
-            v-if="state6 == 7"
-            src="../assets/image/castle/img7.png"
-            alt=""
-          />
+          <img v-if="level == 0" src="../assets/image/castle/img0.png" alt="" />
+          <img v-if="level == 1" src="../assets/image/castle/img1.png" alt="" />
+          <img v-if="level == 2" src="../assets/image/castle/img2.png" alt="" />
+          <img v-if="level == 3" src="../assets/image/castle/img3.png" alt="" />
+          <img v-if="level == 4" src="../assets/image/castle/img4.png" alt="" />
+          <img v-if="level == 5" src="../assets/image/castle/img5.png" alt="" />
+          <img v-if="level == 6" src="../assets/image/castle/img6.png" alt="" />
+          <img v-if="level == 7" src="../assets/image/castle/img7.png" alt="" />
         </div>
         <div class="leftLevel">
-          <div v-if="state6 == 0" class="leftLevel1">我的等级：无</div>
-          <div v-if="state6 == 1" class="leftLevel1">我的等级：士兵</div>
-          <div v-if="state6 == 2" class="leftLevel1">我的等级：骑士</div>
-          <div v-if="state6 == 3" class="leftLevel1">我的等级：堡垒</div>
-          <div v-if="state6 == 4" class="leftLevel1">我的等级：公爵</div>
-          <div v-if="state6 == 5" class="leftLevel1">我的等级：将军</div>
-          <div v-if="state6 == 6" class="leftLevel1">我的等级：国王</div>
-          <div v-if="state6 == 7" class="leftLevel1">我的等级：皇后</div>
-          <div>质押业绩：{{ state0 }} U</div>
+          <div v-if="level == 0" class="leftLevel1">
+            {{ $t('lang.grades') }}：{{ $t('lang.no') }}
+          </div>
+          <div v-if="level == 1" class="leftLevel1">
+            {{ $t('lang.grades') }}：{{ $t('lang.soldiers') }}
+          </div>
+          <div v-if="level == 2" class="leftLevel1">
+            {{ $t('lang.grades') }}：{{ $t('lang.knight') }}
+          </div>
+          <div v-if="level == 3" class="leftLevel1">
+            {{ $t('lang.grades') }}：{{ $t('lang.fortress') }}
+          </div>
+          <div v-if="level == 4" class="leftLevel1">
+            {{ $t('lang.grades') }}：{{ $t('lang.duke') }}
+          </div>
+          <div v-if="level == 5" class="leftLevel1">
+            {{ $t('lang.grades') }}：{{ $t('lang.general') }}
+          </div>
+          <div v-if="level == 6" class="leftLevel1">
+            {{ $t('lang.grades') }}：{{ $t('lang.king') }}
+          </div>
+          <div v-if="level == 7" class="leftLevel1">
+            {{ $t('lang.grades') }}：{{ $t('lang.queen') }}
+          </div>
+          <div class="fontStyle">
+            <div class="fontLength">{{ $t('lang.pledgePerformance') }}</div>
+            <div>：{{ state0 }} U</div>
+          </div>
           <!-- <div>分节总质押市值：{{ state2 }} U</div> -->
-          <div>个人质押市值：{{ state3 }} U</div>
-          <div>距升级还差：{{ state7 }} U</div>
+          <div class="fontStyle">
+            <div class="fontLength">{{ $t('lang.personalPledge') }}</div>
+            <div>：{{ state1 }} U</div>
+          </div>
+          <div class="fontStyle">
+            <div class="fontLength">{{ $t('lang.upgrade') }}</div>
+            <div>：{{ state2 }} U</div>
+          </div>
         </div>
-        <button @click="handlePledge()">质押</button>
+        <button @click="handlePledge()">{{ $t('lang.pledge') }}</button>
       </div>
       <div class="right">
-        <div class="rightTitle">质押业绩</div>
-        <div>质押业绩：{{ state0 }} PIZ</div>
-        <!-- <div>分节点业绩：{{ state2 }} PIZ</div> -->
-        <div>持币地址数：{{ state4 }} 个</div>
-        <div>个人质押市值：{{ state3 }} U</div>
-        <div>分享挖矿收益：{{ state5 }} U</div>
-        <button @click="handelExtract()">提取</button>
+        <div class="rightTitle">{{ $t('lang.pledgePerformance') }}</div>
+        <div class="fontStyle">
+          <div class="fontLength">{{ $t('lang.pledgePerformance') }}</div>
+          <div>：{{ state3 }} PIZ</div>
+        </div>
+        <div class="fontStyle">
+          <div class="fontLength">{{ $t('lang.addresses') }}</div>
+          <div>：{{ state4 }} {{ $t('lang.a') }}</div>
+        </div>
+        <div class="fontStyle">
+          <div class="fontLength">{{ $t('lang.personalPledge') }}</div>
+          <div>：{{ state5 }} PIZ</div>
+        </div>
+        <div class="fontStyle">
+          <div class="fontLength">{{ $t('lang.shareMining') }}</div>
+          <div>：{{ state6 }} PIZ</div>
+        </div>
+        <div class="fontStyle">
+          <div class="fontLength">{{ $t('lang.upgrade') }}</div>
+          <div>：{{ state7 }} PIZ</div>
+        </div>
+        <button @click="handelExtract()">{{ $t('lang.extract') }}</button>
       </div>
     </div>
     <!-- <div class="registerBtn" v-if="!flagRegister">
@@ -77,16 +85,10 @@
     </div> -->
 
     <!-- 弹窗 -->
-    <el-dialog
-      :visible.sync="dialogVisible"
-      :before-close="handleClose"
-      center
-      v-loading.fullscreen.lock="fullscreenLoading"
-      element-loading-text="加载中..."
-    >
+    <el-dialog :visible.sync="dialogVisible" :before-close="handleClose" center>
       <div class="diaContent">
-        <div class="title1">质押</div>
-        <div class="title2">{{ number3 }} PIZ可用</div>
+        <div class="title1">{{ $t('lang.pledge') }}</div>
+        <div class="title2">{{ number3 }} PIZ{{ $t('lang.available') }}</div>
         <div class="inputMag">
           <div class="pizmsg">PIZ</div>
           <input
@@ -95,17 +97,37 @@
             placeholder="请输入数量"
           />
         </div>
-        <div class="title3" @click="getMaxNumber()">最大值</div>
+        <div class="title3" @click="getMaxNumber()">
+          {{ $t('lang.maximum') }}
+        </div>
         <div class="buttonBox">
-          <button class="confimBtn" @click="confimBtn()">授权</button>
+          <button
+            class="confimBtn"
+            @click="confimBtn()"
+            :disabled="approveDis"
+            :class="{ confimBtnFlag: approveDis }"
+          >
+            {{ $t('lang.authorization') }}
+          </button>
           <button
             class="cancelBtn"
             @click="cancelBtn()"
             :class="{ cancelBtnFlag: flag }"
           >
-            质押
+            {{ $t('lang.pledge') }}
           </button>
         </div>
+      </div>
+    </el-dialog>
+
+    <!-- <el-button size="mini" type="primary" @click="testDialog"
+      >点击一下</el-button
+    > -->
+
+    <el-dialog :visible.sync="fullscreenLoading" center>
+      <div class="loading">
+        <circle2></circle2>
+        <div class="loadingText">loading...</div>
       </div>
     </el-dialog>
   </div>
@@ -113,31 +135,38 @@
 
 <script>
 import fun from '../mixins/common.js'
+import { Circle2 } from 'vue-loading-spinner'
 
 export default {
+  components: {
+    Circle2,
+  },
   mixins: [fun],
   data() {
     return {
+      dialogTest: false,
       fullscreenLoading: false, //置灰开关
       flagRegister: false,
       flag: false,
+      approveDis: false,
       dialogVisible: false,
       pizNumber: '',
       number2: '',
       number3: '', //可用的piz
       address: this.$store.state.adsCastle, //城堡合约
       abi: this.$store.state.abiCastle, // 城堡合约地址abi
-      address1: this.$store.state.adsTest, //测试piz地址
+      address1: this.$store.state.pizTest, //测试piz地址
       abi1: this.$store.state.abiTest, //测试地址abi
       state: '', //用户id
-      state0: '', //  质押业绩U
-      state1: '', //  质押业绩PIZ
-      // state2: '', //分节点
-      state3: '', //个人质押
-      state4: '', //持币地址数
-      state5: '', //分享挖矿收益
-      state6: '', //我的等级
-      state7: '', //距升级还差
+      state0: '', //质押业绩 u
+      state1: '', // 个人质押市值 u
+      state2: '', //距升级 u
+      state3: '',
+      state4: '',
+      state5: '',
+      state6: '',
+      state7: '', //距升级还差 piz
+      level: '', //我的等级
       precision: '', //精度
       raddress: '', //推荐人地址
       addressAll: '', //钱包地址
@@ -151,6 +180,9 @@ export default {
     this.hendleWalletBtn()
   },
   methods: {
+    testDialog() {
+      this.dialogTest = true
+    },
     //  获得钱包地址
     async hendleWalletBtn() {
       if (typeof window.ethereum !== 'undefined') {
@@ -169,34 +201,35 @@ export default {
         .getStats(newAccounts)
         .call()
         .then((res) => {
-          console.log('resstates', res)
+          console.log('huihuihui', res)
           this.raddress = res.referer
-          this.state = res.stats[0]
-          this.state0 = res.stats[1] / Math.pow(10, 18)
-          this.state0 = this.state0.toFixed(2)
-          this.state3 = res.stats[3] / Math.pow(10, 18)
-          this.state3 = this.state3.toFixed(2)
-          this.state4 = res.stats[4]
-          this.state5 = res.stats[5] / Math.pow(10, 18)
-          this.state6 = res.stats[6]
-          this.state7 = res.stats[7] / Math.pow(10, 18)
+          this.level = res.usdtstats[6]
+          this.state = res.usdtstats[0]
+          this.state0 = res.usdtstats[1] / Math.pow(10, 18)
+          this.state0 = Math.floor(this.state0 * 1000000) / 1000000
+          this.state1 = res.usdtstats[3] / Math.pow(10, 18)
+          this.state1 = Math.floor(this.state1 * 1000000) / 1000000
+          this.state2 = res.usdtstats[7] / Math.pow(10, 18)
+          this.state2 = Math.floor(this.state2 * 1000000) / 1000000
+          this.state3 = res.pizstats[1] / Math.pow(10, 6)
+          this.state3 = Math.floor(this.state3 * 1000000) / 1000000
+          this.state4 = res.pizstats[4]
+          this.state5 = res.pizstats[3] / Math.pow(10, 6)
+          this.state5 = Math.floor(this.state5 * 1000000) / 1000000
+          this.state6 = res.pizstats[5] / Math.pow(10, 6)
+          this.state6 = Math.floor(this.state6 * 1000000) / 1000000
+          this.state7 = res.pizstats[7] / Math.pow(10, 6)
+          this.state7 = Math.floor(this.state7 * 1000000) / 1000000
           if (this.state != 0) {
             this.flagRegister = true
           }
         })
-      this.usdtState = await contractInstance.methods
-        .getUsdt(this.state0)
-        .call()
-      this.pizState = await contractInstance.methods.getPiz(this.state0).call()
+      // this.usdtState = await contractInstance.methods
+      //   .getUsdt(this.state0)
+      //   .call()
+      // this.pizState = await contractInstance.methods.getPiz(this.state0).call()
     },
 
-    // 获得的数据转piz
-    // async handelGetPiz() {
-    //   const accounts = await this.getAccounts()
-    //   const newAccounts = accounts[0]
-    //   const contractInstance = this.contractWebEth(this.abi, this.address)
-    //   await contractInstance.methods
-    // },
     handlePledge() {
       this.dialogVisible = true
       this.pizNumber = ''
@@ -211,14 +244,21 @@ export default {
       const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
       const contractInstance = this.contractWebEth(this.abi1, this.address1)
+      console.log(this.abi1)
+      console.log(this.address1)
+      console.log('contractInstance', contractInstance)
       await contractInstance.methods
         .decimals()
         .call()
         .then((res) => {
           this.precision = res
+          console.log('this.precision', this.precision)
         })
-      await contractInstance.methods
-        .approve(this.address, this.pizNumber * Math.pow(10, this.precision))
+      const res = await contractInstance.methods
+        .approve(
+          this.address,
+          web3.utils.fromDecimal(this.pizNumber * Math.pow(10, this.precision))
+        )
         .send({ from: newAccounts })
         .then((res) => {
           console.log('授权approve', res)
@@ -226,6 +266,7 @@ export default {
             this.$message.success('授权成功')
             this.flag = true
             this.fullscreenLoading = false
+            this.approveDis = true
           }
         })
         .catch((err) => {
@@ -240,12 +281,14 @@ export default {
         this.$message.warning('请先授权')
         return
       }
-      this.fullscreenLoading = true
+      // this.fullscreenLoading = true
       const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
       const contractInstance = this.contractWebEth(this.abi, this.address)
       await contractInstance.methods
-        .farming(this.pizNumber * 1000000)
+        .farming(
+          web3.utils.fromDecimal(this.pizNumber * Math.pow(10, this.precision))
+        )
         .send({ from: newAccounts })
         .then((res) => {
           console.log('质押', res)
@@ -256,14 +299,19 @@ export default {
             this.dialogVisible = false
             this.pizInput = ''
             this.flag = false
-            this.fullscreenLoading = false
+            this.approveDis = false
+            // this.fullscreenLoading = false
           }
         })
         .catch((err) => {
           console.log(err)
           if (res.status == false) {
             this.$message.error('质押失败')
-            this.fullscreenLoading = false
+            this.dialogVisible = false
+            this.pizInput = ''
+            this.flag = false
+            this.approveDis = false
+            // this.fullscreenLoading = false
           }
         })
     },
@@ -339,6 +387,7 @@ export default {
         .balanceOf(newAccounts)
         .call()
         .then((res) => {
+          console.log('this.pizNumber', res)
           this.pizNumber = res / Math.pow(10, this.precision)
         })
     },
@@ -445,6 +494,18 @@ export default {
           font-weight: bold;
           color: #000000;
         }
+        .fontStyle {
+          display: flex;
+          flex-direction: row;
+          justify-content: center;
+          align-items: center;
+          .fontLength {
+            width: 150px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
+        }
       }
       button {
         width: 195px;
@@ -488,13 +549,16 @@ export default {
         font-family: PingFang-SC-Bold, PingFang-SC;
         font-weight: bold;
         color: #000000;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       button {
         width: 195px;
         height: 58px;
         display: block;
         margin: auto;
-        margin-top: 134px;
+        margin-top: 95px;
         background: #1ec7d5;
         border-radius: 29px;
         cursor: pointer;
@@ -504,6 +568,18 @@ export default {
         color: #ffffff;
         border: 0;
         outline: none;
+      }
+      .fontStyle {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        .fontLength {
+          width: 150px;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
       }
     }
   }
@@ -599,6 +675,17 @@ export default {
         outline: none;
         cursor: pointer;
       }
+      .confimBtnFlag {
+        width: 520px;
+        height: 60px;
+        font-size: 24px;
+        background: #cccccc;
+        border-radius: 12px;
+        color: #ffffff;
+        border: none;
+        outline: none;
+        cursor: pointer;
+      }
       .cancelBtn {
         width: 520px;
         height: 60px;
@@ -631,7 +718,29 @@ export default {
       // }
     }
   }
+  .loading {
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    .loadingText {
+      margin-top: 20px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+  }
+  .el-dialog__body {
+    width: 200px;
+    .loading {
+      .spinner {
+        width: 80px !important;
+        height: 80px !important;
+      }
+    }
+  }
 }
+
 @media screen and (max-width: 767px) {
   .container {
     width: 100%;
@@ -670,6 +779,11 @@ export default {
             height: 27px;
             line-height: 27px;
           }
+          .fontStyle {
+            .fontLength {
+              width: 110px;
+            }
+          }
         }
         button {
           width: 163px;
@@ -702,6 +816,11 @@ export default {
           margin: auto;
           margin-top: 70px;
           margin-bottom: 22px;
+        }
+        .fontStyle {
+          .fontLength {
+            width: 110px;
+          }
         }
       }
     }
@@ -764,6 +883,14 @@ export default {
           font-size: 12px;
           margin: 20px 0 6px 0;
         }
+        .confimBtnFlag {
+          width: 250px;
+          height: 30px;
+          border-radius: 6px;
+          font-size: 12px;
+          background: #cccccc;
+          color: #ffffff;
+        }
         .cancelBtn {
           width: 250px;
           height: 30px;
@@ -778,6 +905,26 @@ export default {
           background: #1ec7d5;
           border-radius: 6px;
           font-size: 12px;
+        }
+      }
+    }
+    .loading {
+      height: 100px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      .loadingText {
+        margin-top: 10px;
+        font-size: 12px;
+        font-weight: bold;
+      }
+    }
+    .el-dialog__body {
+      .loading {
+        .spinner {
+          width: 40px !important;
+          height: 40px !important;
         }
       }
     }
