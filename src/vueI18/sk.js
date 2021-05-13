@@ -60,4 +60,6 @@ export const lang = {
   toBeSuccessful: '성공을 획득하다',
   harvestSuc: '수확을 거두다',
   harvestFail: '수확에 실패하다.',
+  extractSuc: '추출 성공',
+  extractFail: '추출 실패',
 }

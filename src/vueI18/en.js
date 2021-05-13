@@ -67,4 +67,6 @@ export const lang = {
   toBeSuccessful: 'To be successful',
   harvestSuc: 'Harvest success',
   harvestFail: 'Harvest failure',
+  extractSuc: 'Extraction of success',
+  extractFail: 'Extraction of failure',
 }

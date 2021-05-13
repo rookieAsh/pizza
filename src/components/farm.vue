@@ -12,10 +12,10 @@
           <div class="img1">
             <img src="../assets/image/farm/img4.png" alt="" />
           </div>
-          <div class="tab">PIZ {{ $t('lang.pledgeToDig') }}</div>
+          <div class="tab">ZOO {{ $t('lang.pledgeToDig') }}</div>
           <div class="msg">
-            <div>{{ $t('lang.deposit') }}PIZ</div>
-            <div>{{ $t('lang.obtain') }}PIZ</div>
+            <div>{{ $t('lang.deposit') }}ZOO</div>
+            <div>{{ $t('lang.obtain') }}ZOO</div>
           </div>
           <div>
             <button @click="handlePizdig(0)">{{ $t('lang.choose') }}</button>
@@ -24,17 +24,17 @@
             <div class="div1">
               {{ $t('lang.annualInterestRate') }}：{{ annualInterestRate0 }}
             </div>
-            <div class="div2">{{ $t('lang.dailyProduction') }}：35000PIZ</div>
+            <div class="div2">{{ $t('lang.dailyProduction') }}：35000 ZOO</div>
           </div>
         </div>
         <div class="submenu">
           <div class="img">
             <img src="../assets/image/farm/img1.png" alt="" />
           </div>
-          <div class="tab">USDT-PIZ/LP {{ $t('lang.pledgeToDig') }}</div>
+          <div class="tab">USDT-ZOO/LP {{ $t('lang.pledgeToDig') }}</div>
           <div class="msg">
-            <div>{{ $t('lang.deposit') }}USDT-PIZ</div>
-            <div>{{ $t('lang.obtain') }}PIZ</div>
+            <div>{{ $t('lang.deposit') }}USDT-ZOO</div>
+            <div>{{ $t('lang.obtain') }}ZOO</div>
           </div>
           <div>
             <button @click="handlePizdig1(1)">{{ $t('lang.choose') }}</button>
@@ -43,17 +43,17 @@
             <div class="div1">
               {{ $t('lang.annualInterestRate') }}：{{ annualInterestRate1 }}
             </div>
-            <div class="div2">{{ $t('lang.dailyProduction') }}：35000PIZ</div>
+            <div class="div2">{{ $t('lang.dailyProduction') }}：35000 ZOO</div>
           </div>
         </div>
         <div class="submenu">
           <div class="img">
             <img src="../assets/image/farm/img3.png" alt="" />
           </div>
-          <div class="tab">BUSD-PIZ/LP {{ $t('lang.pledgeToDig') }}</div>
+          <div class="tab">BUSD-ZOO/LP {{ $t('lang.pledgeToDig') }}</div>
           <div class="msg">
-            <div>{{ $t('lang.deposit') }}BUSD-PIZ</div>
-            <div>{{ $t('lang.obtain') }}PIZ</div>
+            <div>{{ $t('lang.deposit') }}BUSD-ZOO</div>
+            <div>{{ $t('lang.obtain') }}ZOO</div>
           </div>
           <div>
             <button @click="handlePizdig2(2)">{{ $t('lang.choose') }}</button>
@@ -62,17 +62,17 @@
             <div class="div1">
               {{ $t('lang.annualInterestRate') }}：{{ annualInterestRate2 }}
             </div>
-            <div class="div2">{{ $t('lang.dailyProduction') }}：35000PIZ</div>
+            <div class="div2">{{ $t('lang.dailyProduction') }}：35000 ZOO</div>
           </div>
         </div>
         <div class="submenu">
           <div class="img">
             <img src="../assets/image/farm/img2.png" alt="" />
           </div>
-          <div class="tab">BNB-PIZ/LP {{ $t('lang.pledgeToDig') }}</div>
+          <div class="tab">BNB-ZOO/LP {{ $t('lang.pledgeToDig') }}</div>
           <div class="msg">
-            <div>{{ $t('lang.deposit') }}BNB-PIZ</div>
-            <div>{{ $t('lang.obtain') }}PIZ</div>
+            <div>{{ $t('lang.deposit') }}BNB-ZOO</div>
+            <div>{{ $t('lang.obtain') }}ZOO</div>
           </div>
           <div>
             <button @click="handlePizdig3(3)">{{ $t('lang.choose') }}</button>
@@ -81,7 +81,7 @@
             <div class="div1">
               {{ $t('lang.annualInterestRate') }}：{{ annualInterestRate3 }}
             </div>
-            <div class="div2">{{ $t('lang.dailyProduction') }}：35000PIZ</div>
+            <div class="div2">{{ $t('lang.dailyProduction') }}：35000 ZOO</div>
           </div>
         </div>
       </div>
@@ -96,6 +96,7 @@
 
 <script>
 import fun from '../mixins/common.js'
+import { BigNumber } from 'bignumber.js'
 
 export default {
   mixins: [fun],
@@ -105,7 +106,7 @@ export default {
       flag: false,
       state: '',
       dialogVisible: false,
-      pizAddress: '0x116f88f48da8da893bc390564d430d918eb0412e', //piz地址
+      pizAddress: this.$store.state.pizTest, //piz地址
       pizAbi: this.$store.state.abiTest, //测试地址abi
       address: this.$store.state.adsCastle, //城堡合约
       abi: this.$store.state.abiCastle, // 城堡合约地址abi
@@ -199,6 +200,10 @@ export default {
       this.inviter = window.sessionStorage.getItem('setinviter')
       const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
+      console.log(
+        this.address,
+        '0000000000000000000000000000000000000000000000000'
+      )
       const contractInstance = this.contractWebEth(this.abi, this.address)
       await contractInstance.methods
         .register(this.inviter)
@@ -211,10 +216,10 @@ export default {
           console.log('errerr', err)
         })
     },
-    // 获得年利率
-    // 获得池子地址LpToken
+    // 获得年利率：
+    // 先获得池子地址LpToken
     // 然后得到代币余额 转piz
-    // 最后计算得{{ $t('lang.annualInterestRate') }}
+    // 最后计算得年化利率  == 年产值/投入
     async getAnnualInterestRate0() {
       const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
@@ -223,28 +228,18 @@ export default {
         this.addressFarm
       )
       await contractInstance.methods
-        .pools('0')
+        .poolInfo('0')
         .call()
         .then((res) => {
           this.addressLpToken0 = res.lpToken
-        })
-      const contractInstances = this.contractWebEth(
-        this.abiTest,
-        this.addressLpToken0
-      )
-      await contractInstances.methods
-        .balanceOf(this.addressFarm)
-        .call()
-        .then((res) => {
-          this.balance0 = res
+          this.balance0 = res.totalAmount
         })
       const contractInstanceCastle = this.contractWebEth(this.abi, this.address)
       await contractInstanceCastle.methods
-        .getPiz('0', this.balance0)
+        .getAmount(this.balance0, this.addressLpToken0)
         .call()
         .then((res) => {
           this.balanceToPiz0 = res
-          console.log('this.balanceToPiz0', this.balanceToPiz0)
         })
       const contractInstancePiz = this.contractWebEth(
         this.pizAbi,
@@ -256,13 +251,23 @@ export default {
         .then((res) => {
           this.precisionPiz = res
         })
-      this.annualInterestRate0 =
-        (3500 * 365 * 100 * Math.pow(10, this.precisionPiz)) /
-        this.balanceToPiz0
-      console.log(this.annualInterestRate0)
-      this.annualInterestRate0 =
-        Math.floor(this.annualInterestRate0 * 100) / 100 + '%'
-      console.log('this.annualInterestRate0', this.annualInterestRate0)
+      // this.annualInterestRate0 = 35000 * 365 * Math.pow(10, this.precisionPiz)
+      // this.annualInterestRate0 =
+      //   Math.floor(this.annualInterestRate0 * 100) / 100 + '%'
+      // 年产值/投入
+      if (this.balanceToPiz0 == 0) {
+        this.annualInterestRate0 = ' ∞ '
+      } else {
+        const annual = BigNumber(35000 * 365 * Math.pow(10, this.precisionPiz))
+        await contractInstanceCastle.methods
+          .getAmount(web3.utils.toHex(annual), this.addressLpToken0)
+          .call()
+          .then((res) => {
+            this.annualInterestRate0 = (res * 100) / this.balanceToPiz0
+            this.annualInterestRate0 =
+              Math.floor(this.annualInterestRate0 * 100) / 100 + '%'
+          })
+      }
     },
 
     async getAnnualInterestRate1() {
@@ -273,7 +278,7 @@ export default {
         this.addressFarm
       )
       await contractInstance.methods
-        .pools('1')
+        .poolInfo('1')
         .call()
         .then((res) => {
           this.addressLpToken1 = res.lpToken
@@ -290,7 +295,7 @@ export default {
         })
       const contractInstanceCastle = this.contractWebEth(this.abi, this.address)
       await contractInstanceCastle.methods
-        .getPiz('1', this.balance1)
+        .getAmount(this.balance1, this.addressLpToken1)
         .call()
         .then((res) => {
           this.balanceToPiz1 = res
@@ -305,12 +310,20 @@ export default {
         .then((res) => {
           this.precisionPiz = res
         })
-      this.annualInterestRate1 =
-        (3500 * 365 * 100 * Math.pow(10, this.precisionPiz)) /
-        this.balanceToPiz1
-      this.annualInterestRate1 =
-        Math.floor(this.annualInterestRate1 * 100) / 100 + '%'
-      console.log('this.annualInterestRate1', this.annualInterestRate1)
+      if (this.balanceToPiz1 == 0) {
+        this.annualInterestRate1 = ' ∞ '
+      } else {
+        const annual = BigNumber(35000 * 365 * Math.pow(10, this.precisionPiz))
+        await contractInstanceCastle.methods
+          .getAmount(web3.utils.toHex(annual), this.addressLpToken1)
+          .call()
+          .then((res) => {
+            this.annualInterestRate1 = (res * 100) / this.balanceToPiz1
+            this.annualInterestRate1 =
+              Math.floor(this.annualInterestRate1 * 100) / 100 + '%'
+            // this.annualInterestRate1.toFixed(2) + '%'
+          })
+      }
     },
 
     async getAnnualInterestRate2() {
@@ -321,7 +334,7 @@ export default {
         this.addressFarm
       )
       await contractInstance.methods
-        .pools('2')
+        .poolInfo('2')
         .call()
         .then((res) => {
           this.addressLpToken2 = res.lpToken
@@ -338,32 +351,43 @@ export default {
         })
       const contractInstanceCastle = this.contractWebEth(this.abi, this.address)
       await contractInstanceCastle.methods
-        .getPiz('2', this.balance2)
+        .getAmount(this.balance2, this.addressLpToken2)
         .call()
         .then((res) => {
           this.balanceToPiz2 = res
         })
+      // if (this.balanceToPiz2 == 0) {
+      //   this.annualInterestRate2 = ' ∞ '
+      // } else {
+      const contractInstancePiz = this.contractWebEth(
+        this.pizAbi,
+        this.pizAddress
+      )
+      await contractInstancePiz.methods
+        .decimals()
+        .call()
+        .then((res) => {
+          this.precisionPiz = res
+        })
+      //   this.annualInterestRate2 =
+      //     (35000 * 365 * 100 * Math.pow(10, this.precisionPiz)) /
+      //     this.balanceToPiz2
+      //   this.annualInterestRate2 =
+      //     Math.floor(this.annualInterestRate2 * 100) / 100 + '%'
+      // }
+
       if (this.balanceToPiz2 == 0) {
         this.annualInterestRate2 = ' ∞ '
       } else {
-        const contractInstancePiz = this.contractWebEth(
-          this.pizAbi,
-          this.pizAddress
-        )
-        await contractInstancePiz.methods
-          .decimals()
+        const annual = BigNumber(35000 * 365 * Math.pow(10, this.precisionPiz))
+        await contractInstanceCastle.methods
+          .getAmount(web3.utils.toHex(annual), this.addressLpToken2)
           .call()
           .then((res) => {
-            this.precisionPiz = res
+            this.annualInterestRate2 = (res * 100) / this.balanceToPiz2
+            this.annualInterestRate2 =
+              Math.floor(this.annualInterestRate2 * 100) / 100 + '%'
           })
-
-        this.annualInterestRate2 =
-          (35000 * 365 * 100 * Math.pow(10, this.precisionPiz)) /
-          this.balanceToPiz2
-        console.log(this.annualInterestRate2)
-        this.annualInterestRate2 =
-          Math.floor(this.annualInterestRate2 * 100) / 100 + '%'
-        console.log('this.annualInterestRate1', this.annualInterestRate2)
       }
     },
 
@@ -375,7 +399,7 @@ export default {
         this.addressFarm
       )
       await contractInstance.methods
-        .pools('3')
+        .poolInfo('3')
         .call()
         .then((res) => {
           this.addressLpToken3 = res.lpToken
@@ -392,7 +416,7 @@ export default {
         })
       const contractInstanceCastle = this.contractWebEth(this.abi, this.address)
       await contractInstanceCastle.methods
-        .getPiz('3', this.balance3)
+        .getAmount(this.balance3, this.addressLpToken3)
         .call()
         .then((res) => {
           this.balanceToPiz3 = res
@@ -407,13 +431,24 @@ export default {
         .then((res) => {
           this.precisionPiz = res
         })
-      this.annualInterestRate3 =
-        (35000 * 365 * 100 * Math.pow(10, this.precisionPiz)) /
-        this.balanceToPiz3
-      console.log(this.annualInterestRate3)
-      this.annualInterestRate3 =
-        Math.floor(this.annualInterestRate3 * 100) / 100 + '%'
-      console.log('this.annualInterestRate3', this.annualInterestRate3)
+      // this.annualInterestRate3 =
+      //   (35000 * 365 * 100 * Math.pow(10, this.precisionPiz)) /
+      //   this.balanceToPiz3
+      // this.annualInterestRate3 =
+      //   Math.floor(this.annualInterestRate3 * 100) / 100 + '%'
+      if (this.balanceToPiz3 == 0) {
+        this.annualInterestRate3 = ' ∞ '
+      } else {
+        const annual = BigNumber(35000 * 365 * Math.pow(10, this.precisionPiz))
+        await contractInstanceCastle.methods
+          .getAmount(web3.utils.toHex(annual), this.addressLpToken3)
+          .call()
+          .then((res) => {
+            this.annualInterestRate3 = (res * 100) / this.balanceToPiz3
+            this.annualInterestRate3 =
+              Math.floor(this.annualInterestRate3 * 100) / 100 + '%'
+          })
+      }
     },
   },
 }

@@ -56,7 +56,7 @@ export const lang = {
   pledged: '已质押',
   harvestRedeem: '收割并赎回',
   pledgeToDig: '质押挖矿',
-  pleaseEnter:'请输入',
+  pleaseEnter: '请输入',
 
   authorizationSuc: '授权成功',
   userReject: '用户拒绝事务签名',
@@ -66,4 +66,6 @@ export const lang = {
   toBeSuccessful: '获取成功',
   harvestSuc: '收割成功',
   harvestFail: '收割失败',
+  extractSuc: '提取成功',
+  extractFail: '提取失败',
 }

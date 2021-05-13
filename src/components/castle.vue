@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="titleMsg">{{ $t('lang.castle') }}</div>
-    <div class="titleNav">{{ $t('lang.dailyProduction') }} 160000 PIZ</div>
+    <div class="titleNav">{{ $t('lang.dailyProduction') }} 160000 ZOO</div>
     <div class="content">
       <div class="left">
         <div class="leftImg">
@@ -59,7 +59,7 @@
         <div class="rightTitle">{{ $t('lang.pledgePerformance') }}</div>
         <div class="fontStyle">
           <div class="fontLength">{{ $t('lang.pledgePerformance') }}</div>
-          <div>：{{ state3 }} PIZ</div>
+          <div>：{{ state3 }} ZOO</div>
         </div>
         <div class="fontStyle">
           <div class="fontLength">{{ $t('lang.addresses') }}</div>
@@ -67,15 +67,15 @@
         </div>
         <div class="fontStyle">
           <div class="fontLength">{{ $t('lang.personalPledge') }}</div>
-          <div>：{{ state5 }} PIZ</div>
+          <div>：{{ state5 }} ZOO</div>
         </div>
         <div class="fontStyle">
           <div class="fontLength">{{ $t('lang.shareMining') }}</div>
-          <div>：{{ state6 }} PIZ</div>
+          <div>：{{ state6 }} ZOO</div>
         </div>
         <div class="fontStyle">
           <div class="fontLength">{{ $t('lang.upgrade') }}</div>
-          <div>：{{ state7 }} PIZ</div>
+          <div>：{{ state7 }} ZOO</div>
         </div>
         <button @click="handelExtract()">{{ $t('lang.extract') }}</button>
       </div>
@@ -88,9 +88,9 @@
     <el-dialog :visible.sync="dialogVisible" :before-close="handleClose" center>
       <div class="diaContent">
         <div class="title1">{{ $t('lang.pledge') }}</div>
-        <div class="title2">{{ number3 }} PIZ{{ $t('lang.available') }}</div>
+        <div class="title2">{{ number3 }} ZOO{{ $t('lang.available') }}</div>
         <div class="inputMag">
-          <div class="pizmsg">PIZ</div>
+          <div class="pizmsg">ZOO</div>
           <input
             class="pizInput"
             v-model="pizNumber"
@@ -201,7 +201,6 @@ export default {
         .getStats(newAccounts)
         .call()
         .then((res) => {
-          console.log('huihuihui', res)
           this.raddress = res.referer
           this.level = res.usdtstats[6]
           this.state = res.usdtstats[0]
@@ -211,14 +210,14 @@ export default {
           this.state1 = Math.floor(this.state1 * 1000000) / 1000000
           this.state2 = res.usdtstats[7] / Math.pow(10, 18)
           this.state2 = Math.floor(this.state2 * 1000000) / 1000000
-          this.state3 = res.pizstats[1] / Math.pow(10, 6)
+          this.state3 = res.pizstats[1] / Math.pow(10, 18)
           this.state3 = Math.floor(this.state3 * 1000000) / 1000000
           this.state4 = res.pizstats[4]
-          this.state5 = res.pizstats[3] / Math.pow(10, 6)
+          this.state5 = res.pizstats[3] / Math.pow(10, 18)
           this.state5 = Math.floor(this.state5 * 1000000) / 1000000
-          this.state6 = res.pizstats[5] / Math.pow(10, 6)
+          this.state6 = res.pizstats[5] / Math.pow(10, 18)
           this.state6 = Math.floor(this.state6 * 1000000) / 1000000
-          this.state7 = res.pizstats[7] / Math.pow(10, 6)
+          this.state7 = res.pizstats[7] / Math.pow(10, 18)
           this.state7 = Math.floor(this.state7 * 1000000) / 1000000
           if (this.state != 0) {
             this.flagRegister = true
@@ -252,7 +251,7 @@ export default {
         .call()
         .then((res) => {
           this.precision = res
-          console.log('this.precision', this.precision)
+          // console.log('this.precision', this.precision)
         })
       const res = await contractInstance.methods
         .approve(
@@ -263,7 +262,7 @@ export default {
         .then((res) => {
           console.log('授权approve', res)
           if (res.status == true) {
-            this.$message.success('授权成功')
+            this.$message.success(this.$t('lang.authorizationSuc'))
             this.flag = true
             this.fullscreenLoading = false
             this.approveDis = true
@@ -271,14 +270,14 @@ export default {
         })
         .catch((err) => {
           console.log(err)
-          this.$message.error('用户拒绝事务签名')
+          this.$message.error(this.$t('lang.userReject'))
           this.fullscreenLoading = false
         })
     },
     // 质押farming
     async cancelBtn() {
       if (!this.flag) {
-        this.$message.warning('请先授权')
+        this.$message.warning(this.$t('lang.pleaseAuthorize'))
         return
       }
       // this.fullscreenLoading = true
@@ -293,7 +292,7 @@ export default {
         .then((res) => {
           console.log('质押', res)
           if (res.status == true) {
-            this.$message.success('质押成功')
+            this.$message.success(this.$t('lang.pledgeSuc'))
             this.getPizNumber()
             this.getMaxNumber()
             this.dialogVisible = false
@@ -306,7 +305,7 @@ export default {
         .catch((err) => {
           console.log(err)
           if (res.status == false) {
-            this.$message.error('质押失败')
+            this.$message.error(this.$t('lang.pledgeFail'))
             this.dialogVisible = false
             this.pizInput = ''
             this.flag = false
@@ -324,15 +323,14 @@ export default {
         .reap()
         .send({ from: newAccounts })
         .then((res) => {
-          console.log('提取', res)
           if (res.status == true) {
-            this.$message.success('提取成功')
+            this.$message.success(this.$t('lang.extractSuc'))
           }
         })
         .catch((err) => {
           console.log(err)
           if (res.status == false) {
-            this.$message.error('提取失败')
+            this.$message.error(this.$t('lang.extractFail'))
           }
         })
     },

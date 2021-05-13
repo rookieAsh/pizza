@@ -3,7 +3,7 @@
     <el-aside :width="isCollapse ? '64px' : '280px'" class="aside">
       <div class="asideImg" v-show="!isCollapse">
         <img src="../assets/image/home/logo.png" />
-        <div class="asideMark">PizzaSwap</div>
+        <div class="asideMark">Zooswap</div>
       </div>
       <div class="asideImg1" v-show="isCollapse"></div>
       <el-menu
@@ -58,7 +58,7 @@
           id="copy1"
           style="width: 100px; word-wrap: break-word"
         >
-          http://pizswap.com/#/farm?{{ this.addressAll }}
+          http://zooswap.club/#/farm?{{ this.addressAll }}
         </div>
       </el-menu>
     </el-aside>
@@ -69,7 +69,7 @@
             <div class="headerImg" v-show="isCollapse">
               <img src="../assets/image/home/logo.png" alt="" />
             </div>
-            <div class="headerTitle" v-show="isCollapse">PizzaSwap</div>
+            <div class="headerTitle" v-show="isCollapse">Zooswap</div>
             <div class="headerLeft" @click="isCollapseClick">
               <img
                 v-if="!isCollapse"
@@ -145,7 +145,7 @@
               @click="hendleWalletBtn()"
               v-if="address == ''"
             >
-              <span>连接钱包</span>
+              <span> {{ $t('lang.connectPurse') }}</span>
             </button>
           </div>
         </div>
@@ -228,7 +228,7 @@
               <span> {{ address }}</span>
             </button>
             <button class="moneyBtn" @click="hendleWalletBtn()" v-if="!address">
-              <span>连接钱包</span>
+              <span>{{ $t('lang.connectPurse') }}</span>
             </button>
           </div>
         </div>
@@ -268,7 +268,7 @@
                   :key="key"
                   class="elmenuitem"
                 >
-                  <a href="http://pizswap.com/pizswap/#/swap">
+                  <a href="http://zooswap.club/pizswap/#/swap">
                     <span class="spanSwap">{{ items.authName }}</span></a
                   >
                 </el-menu-item>
@@ -285,12 +285,12 @@
             </template>
             <div class="invite" v-if="userState != 0">
               <img src="../assets/image/home/invite.png" alt="" />
-              <span v-show="!isCollapse" @click="inviteBtn2('copy2')"
-                >邀请链接</span
-              >
+              <span v-show="!isCollapse" @click="inviteBtn2('copy2')">{{
+                $t('lang.inviteConnect')
+              }}</span>
             </div>
             <div class="yaoqing1" id="copy2">
-              http://pizswap.com/#/farm?{{ this.addressAll }}
+              http://zooswap.club/#/farm?{{ this.addressAll }}
             </div>
           </van-popup>
         </el-menu>

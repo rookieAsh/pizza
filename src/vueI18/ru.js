@@ -60,4 +60,6 @@ export const lang = {
   toBeSuccessful: 'Успех!',
   harvestSuc: 'Жатва завершена.',
   harvestFail: 'Жатва не удалась.',
+  extractSuc: 'Извлечение прошло успешно.',
+  extractFail: 'Извлечение не удалось.',
 }

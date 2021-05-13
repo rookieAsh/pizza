@@ -60,4 +60,6 @@ export const lang = {
   toBeSuccessful: '成功を収める',
   harvestSuc: '収穫に成功する',
   harvestFail: '収穫失敗',
+  extractSuc: '抽出に成功する',
+  extractFail: '失敗の抽出',
 }

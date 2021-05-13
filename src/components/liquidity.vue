@@ -35,7 +35,7 @@
             <div class="usdtBox1_1">
               <div></div>
               <div></div>
-              <div>USDT-PIZ</div>
+              <div>USDT-ZOO</div>
             </div>
             <div class="usdtBox1_2">
               <img src="../assets/image/tradLIqui/down.png" alt="" />
@@ -43,7 +43,7 @@
           </div>
           <div class="usdtBox2">
             <div class="usdtBox2_1">
-              <div>PIZ份额</div>
+              <div>ZOO份额</div>
               <div>231231</div>
             </div>
             <div class="usdtBox2_1">

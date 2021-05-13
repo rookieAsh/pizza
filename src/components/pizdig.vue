@@ -1,20 +1,20 @@
 <template>
   <div class="container">
-    <div class="titleMsg">PIZ {{ $t('lang.pledgeToDig') }}</div>
+    <div class="titleMsg">ZOO {{ $t('lang.pledgeToDig') }}</div>
     <div class="titleNav">
-      {{ $t('lang.deposit') }} PIZ {{ $t('lang.obtain') }} PIZ
+      {{ $t('lang.deposit') }} ZOO {{ $t('lang.obtain') }} ZOO
     </div>
     <div class="content">
       <div class="left">
         <div class="box1">{{ number1 }}</div>
-        <div class="box2">{{ $t('lang.obtain') }} PIZ</div>
+        <div class="box2">{{ $t('lang.obtain') }} ZOO</div>
         <div class="box3">
           <button @click="getDate()">{{ $t('lang.obtain') }}</button>
         </div>
       </div>
       <div class="right">
         <div class="box1">{{ number2 }}</div>
-        <div class="box2">PIZ {{ $t('lang.pledged') }}</div>
+        <div class="box2">ZOO {{ $t('lang.pledged') }}</div>
         <div class="box3">
           <button @click="handlePizdig()">{{ $t('lang.pledge') }}</button>
         </div>
@@ -29,9 +29,9 @@
     <el-dialog :visible.sync="dialogVisible" :before-close="handleClose" center>
       <div class="diaContent">
         <div class="title1">{{ $t('lang.pledge') }}</div>
-        <div class="title2">{{ number3 }} PIZ {{ $t('lang.available') }}</div>
+        <div class="title2">{{ number3 }} ZOO {{ $t('lang.available') }}</div>
         <div class="inputMag">
-          <div class="pizmsg">PIZ</div>
+          <div class="pizmsg">ZOO</div>
           <input class="pizInput" v-model="pizNumber" placeholder="" />
         </div>
         <div class="title3" @click="getMaxNumber()">
@@ -81,7 +81,7 @@ export default {
       flag: false,
       approveDis: false,
       dialogVisible: false,
-      // pizAddress: '0x116f88f48da8da893bc390564d430d918eb0412e', //piz地址
+      pizAddress: this.$store.state.pizTest, //piz地址
       address1: '', //测试piz地址
       abi1: this.$store.state.abiTest, //测试地址abi
       address: this.$store.state.adsFarm, //农场合约地址
@@ -92,6 +92,8 @@ export default {
       number3: '',
       pizNumber: '',
       precision: '', //精度
+      number: '',
+      number4: '', //原生质押数量的值
     }
   },
   created() {
@@ -120,7 +122,7 @@ export default {
       const newAccounts = accounts[0]
       const contractInstance = this.contractWebEth(this.abi, this.address)
       await contractInstance.methods
-        .pools(this.pid)
+        .poolInfo(this.pid)
         .call()
         .then((res) => {
           this.address1 = res.lpToken
@@ -161,6 +163,7 @@ export default {
         .call()
         .then((res) => {
           this.precision = res
+          console.log('this.precision', this.precision)
         })
     },
     // 获得可用piz
@@ -203,7 +206,6 @@ export default {
         )
         .send({ from: newAccounts })
         .then((res) => {
-          console.log('授权approve', res)
           if (res.status == true) {
             this.$message.success(this.$t('lang.authorizationSuc'))
             this.flag = true
@@ -228,9 +230,9 @@ export default {
       const newAccounts = accounts[0]
       const contractInstance = this.contractWebEth(this.abi, this.address)
       await contractInstance.methods
-        .stake(
-          web3.utils.fromDecimal(this.pizNumber * Math.pow(10, this.precision)),
-          this.pid
+        .deposit(
+          this.pid,
+          web3.utils.fromDecimal(this.pizNumber * Math.pow(10, this.precision))
         )
         .send({ from: newAccounts })
         .then((res) => {
@@ -259,13 +261,13 @@ export default {
         })
     },
 
-    // 获取
+    // 获取 /收割
     async getDate() {
       const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
       const contractInstance = this.contractWebEth(this.abi, this.address)
       await contractInstance.methods
-        .reap(this.pid)
+        .withdraw(this.pid, 0)
         .send({ from: newAccounts })
         .then((res) => {
           this.$message.success(this.$t('lang.toBeSuccessful'))
@@ -275,13 +277,13 @@ export default {
           this.$message.error(this.$t('lang.userReject'))
         })
     },
-    // 获取数量
+    // 获取数量/可提取收益
     async getDateNum1() {
       const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
       const contractInstance = this.contractWebEth(this.abi, this.address)
       const res = await contractInstance.methods
-        .earned(newAccounts, this.pid)
+        .pending(this.pid, newAccounts)
         .call()
       this.number1 = res / Math.pow(10, this.precision)
       this.number1 = Math.floor(this.number1 * 100) / 100
@@ -291,24 +293,24 @@ export default {
       const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
       const contractInstance = this.contractWebEth(this.abi, this.address)
-      await contractInstance.methods
-        .stakes(this.pid, newAccounts)
+      const res = await contractInstance.methods
+        .userInfo(this.pid, newAccounts)
         .call()
-        .then((res) => {
-          this.number2 = res.amount / Math.pow(10, this.precision)
-          this.number2 = Math.floor(this.number2 * 1000000) / 1000000
-        })
+      this.number4 = res.amount
+      this.number = res.amount / Math.pow(10, this.precision)
+      this.number2 = Math.floor(this.number * 1000000) / 1000000
     },
     // 收割并赎回
     async harvestAndRedemption() {
+      this.getDateNum2()
       const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
       const contractInstance = this.contractWebEth(this.abi, this.address)
       await contractInstance.methods
-        .exit(this.pid)
+        // .exit(this.pid)
+        .withdraw(this.pid, this.number4)
         .send({ from: newAccounts })
         .then((res) => {
-          console.log('收割', res)
           if (res.status == true) {
             this.$message.success(this.$t('lang.harvestSuc'))
             this.getDateNum1()
@@ -316,7 +318,6 @@ export default {
           }
         })
         .catch((err) => {
-          console.log(err)
           if (res.status == false) {
             this.$message.error(this.$t('lang.harvestFail'))
           }
