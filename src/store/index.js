@@ -8,7 +8,7 @@ export default new Vuex.Store({
     address: '',
     isCollapse: false,
     addressAll: '',
-    adsFarm: '0xa2E10ACDe58C481d9EE8359a47C0026357C04b07', //农场合约地址
+    adsFarm: '0xbEC90FeBa7CCFB3e8f26BdDD7BE843442D1b187a', //农场合约地址
     //农场合约地址abi
     abiFarm: [
       {
@@ -399,7 +399,7 @@ export default new Vuex.Store({
         type: 'function',
       },
     ],
-    adsCastle: '0x1ADeBD8f342512b7295E64CA22ADBbD6D3BC7E5B', //城堡合约地址
+    adsCastle: '0xC216E32b8E15FE4E688691d1a21a54e1C4A4CB65', //城堡合约地址
     // 城堡abi
     abiCastle: [
       {
@@ -1041,7 +1041,6 @@ export default new Vuex.Store({
       // state.isCollapse = msg
       // console.log('3123213213333333', msg)
       state.isCollapse = msg
-      console.log(state.isCollapse)
     },
   },
   actions: {},

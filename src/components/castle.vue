@@ -1,8 +1,8 @@
 <template>
   <div class="container">
     <div class="titleMsg">{{ $t('lang.castle') }}</div>
-    <div class="titleNav">{{ $t('lang.dailyProduction') }} 160000 ZOO</div>
-    <div class="content">
+    <div class="titleNav">{{ $t('lang.dailyProduction') }} 160000 PIZ</div>
+    <div class="content" v-if="flagRegister != 0">
       <div class="left">
         <div class="leftImg">
           <img v-if="level == 0" src="../assets/image/castle/img0.png" alt="" />
@@ -45,7 +45,9 @@
           </div>
           <!-- <div>分节总质押市值：{{ state2 }} U</div> -->
           <div class="fontStyle">
-            <div class="fontLength">{{ $t('lang.personalPledge') }}</div>
+            <div class="fontLength">
+              {{ $t('lang.quantityOfPersonalPledge') }}
+            </div>
             <div>：{{ state1 }} U</div>
           </div>
           <div class="fontStyle">
@@ -59,25 +61,32 @@
         <div class="rightTitle">{{ $t('lang.pledgePerformance') }}</div>
         <div class="fontStyle">
           <div class="fontLength">{{ $t('lang.pledgePerformance') }}</div>
-          <div>：{{ state3 }} ZOO</div>
+          <div>：{{ state3 }} PIZ</div>
         </div>
         <div class="fontStyle">
           <div class="fontLength">{{ $t('lang.addresses') }}</div>
           <div>：{{ state4 }} {{ $t('lang.a') }}</div>
         </div>
         <div class="fontStyle">
-          <div class="fontLength">{{ $t('lang.personalPledge') }}</div>
-          <div>：{{ state5 }} ZOO</div>
+          <div class="fontLength">
+            {{ $t('lang.quantityOfPersonalPledge') }}
+          </div>
+          <div>：{{ state5 }} PIZ</div>
         </div>
         <div class="fontStyle">
           <div class="fontLength">{{ $t('lang.shareMining') }}</div>
-          <div>：{{ state6 }} ZOO</div>
+          <div>：{{ state6 }} PIZ</div>
         </div>
         <div class="fontStyle">
           <div class="fontLength">{{ $t('lang.upgrade') }}</div>
-          <div>：{{ state7 }} ZOO</div>
+          <div>：{{ state7 }} PIZ</div>
         </div>
-        <button @click="handelExtract()">{{ $t('lang.extract') }}</button>
+        <button class="button1" @click="handelExtract()">
+          {{ $t('lang.extract') }}
+        </button>
+        <button @click="handleRefundPrincipal()">
+          {{ $t('lang.refundPrincipal') }}
+        </button>
       </div>
     </div>
     <!-- <div class="registerBtn" v-if="!flagRegister">
@@ -88,9 +97,9 @@
     <el-dialog :visible.sync="dialogVisible" :before-close="handleClose" center>
       <div class="diaContent">
         <div class="title1">{{ $t('lang.pledge') }}</div>
-        <div class="title2">{{ number3 }} ZOO{{ $t('lang.available') }}</div>
+        <div class="title2">{{ number3 }} PIZ{{ $t('lang.available') }}</div>
         <div class="inputMag">
-          <div class="pizmsg">ZOO</div>
+          <div class="pizmsg">PIZ</div>
           <input
             class="pizInput"
             v-model="pizNumber"
@@ -101,41 +110,40 @@
           {{ $t('lang.maximum') }}
         </div>
         <div class="buttonBox">
-          <button
-            class="confimBtn"
+          <el-button
+            :loading="isLoading"
             @click="confimBtn()"
-            :disabled="approveDis"
+            class="confimBtn"
             :class="{ confimBtnFlag: approveDis }"
           >
             {{ $t('lang.authorization') }}
-          </button>
+            <!-- {{ titleAuthorization }} -->
+          </el-button>
           <button
-            class="cancelBtn"
             @click="cancelBtn()"
+            class="cancelBtn"
             :class="{ cancelBtnFlag: flag }"
           >
             {{ $t('lang.pledge') }}
+            <!-- {{ titlePledge }} -->
           </button>
         </div>
       </div>
     </el-dialog>
 
-    <!-- <el-button size="mini" type="primary" @click="testDialog"
-      >点击一下</el-button
-    > -->
-
-    <el-dialog :visible.sync="fullscreenLoading" center>
+    <!-- <el-dialog :visible.sync="fullscreenLoading" center>
       <div class="loading">
         <circle2></circle2>
         <div class="loadingText">loading...</div>
       </div>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
 <script>
 import fun from '../mixins/common.js'
 import { Circle2 } from 'vue-loading-spinner'
+import { BigNumber } from 'bignumber.js'
 
 export default {
   components: {
@@ -144,12 +152,15 @@ export default {
   mixins: [fun],
   data() {
     return {
+      isLoading: false,
       dialogTest: false,
-      fullscreenLoading: false, //置灰开关
+      disable: true, //置灰开关
       flagRegister: false,
       flag: false,
       approveDis: false,
       dialogVisible: false,
+      // titleAuthorization: '授权',
+      // titlePledge: '质押',
       pizNumber: '',
       number2: '',
       number3: '', //可用的piz
@@ -230,6 +241,7 @@ export default {
     },
 
     handlePledge() {
+      // this.titleAuthorization = '授权'
       this.dialogVisible = true
       this.pizNumber = ''
     },
@@ -239,7 +251,9 @@ export default {
     },
     // 授权approve
     async confimBtn() {
-      this.fullscreenLoading = true
+      // this.fullscreenLoading = true
+      // this.titleAuthorization = '授权中...'
+      this.isLoading = true
       const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
       const contractInstance = this.contractWebEth(this.abi1, this.address1)
@@ -253,49 +267,50 @@ export default {
           this.precision = res
           // console.log('this.precision', this.precision)
         })
+      const bigNum = BigNumber(this.pizNumber * Math.pow(10, this.precision))
       const res = await contractInstance.methods
-        .approve(
-          this.address,
-          web3.utils.fromDecimal(this.pizNumber * Math.pow(10, this.precision))
-        )
+        .approve(this.address, web3.utils.numberToHex(bigNum))
         .send({ from: newAccounts })
         .then((res) => {
           console.log('授权approve', res)
           if (res.status == true) {
             this.$message.success(this.$t('lang.authorizationSuc'))
             this.flag = true
-            this.fullscreenLoading = false
+            this.isLoading = false
             this.approveDis = true
           }
         })
         .catch((err) => {
           console.log(err)
           this.$message.error(this.$t('lang.userReject'))
-          this.fullscreenLoading = false
+          this.approveDis = false
+          this.isLoading = false
         })
     },
     // 质押farming
     async cancelBtn() {
-      if (!this.flag) {
-        this.$message.warning(this.$t('lang.pleaseAuthorize'))
-        return
-      }
+      // if (!this.flag) {
+      //   this.$message.warning(this.$t('lang.pleaseAuthorize'))
+      //   return
+      // }
+      this.dialogVisible = false
       // this.fullscreenLoading = true
       const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
       const contractInstance = this.contractWebEth(this.abi, this.address)
       await contractInstance.methods
         .farming(
-          web3.utils.fromDecimal(this.pizNumber * Math.pow(10, this.precision))
+          web3.utils.numberToHex(
+            BigNumber(this.pizNumber * Math.pow(10, this.precision))
+          )
         )
         .send({ from: newAccounts })
         .then((res) => {
-          console.log('质押', res)
           if (res.status == true) {
             this.$message.success(this.$t('lang.pledgeSuc'))
             this.getPizNumber()
             this.getMaxNumber()
-            this.dialogVisible = false
+            this.getStatsMsg()
             this.pizInput = ''
             this.flag = false
             this.approveDis = false
@@ -389,6 +404,24 @@ export default {
           this.pizNumber = res / Math.pow(10, this.precision)
         })
     },
+    //退换本金 exit()
+    async handleRefundPrincipal() {
+      const accounts = await this.getAccounts()
+      const newAccounts = accounts[0]
+      const contractInstance = this.contractWebEth(this.abi, this.address)
+      await contractInstance.methods
+        .exit()
+        .send({ from: newAccounts })
+        .then((res) => {
+          console.log('退还本金', res)
+          if (res.status == true) {
+            this.$message.success(this.$t('lang.refundPrincipalSuc'))
+          } else {
+            this.$message.error(this.$t('lang.refundPrincipalFail'))
+          }
+        })
+    },
+
     // 获取可用piz/最大的值
     // async getData(a) {
     //   const accounts = await this.getAccounts()
@@ -556,7 +589,7 @@ export default {
         height: 58px;
         display: block;
         margin: auto;
-        margin-top: 95px;
+        // margin-top: 95px;
         background: #1ec7d5;
         border-radius: 29px;
         cursor: pointer;
@@ -566,6 +599,10 @@ export default {
         color: #ffffff;
         border: 0;
         outline: none;
+      }
+      .button1 {
+        margin-top: 50px;
+        margin-bottom: 10px;
       }
       .fontStyle {
         display: flex;
@@ -676,6 +713,7 @@ export default {
       .confimBtnFlag {
         width: 520px;
         height: 60px;
+        display: none;
         font-size: 24px;
         background: #cccccc;
         border-radius: 12px;
@@ -687,8 +725,9 @@ export default {
       .cancelBtn {
         width: 520px;
         height: 60px;
+        display: none;
         font-size: 24px;
-        background: #cccccc;
+        background: #1ec7d5;
         border-radius: 12px;
         color: #ffffff;
         border: none;
@@ -698,6 +737,7 @@ export default {
       .cancelBtnFlag {
         width: 520px;
         height: 60px;
+        display: block;
         font-size: 24px;
         background: #1ec7d5;
         border-radius: 12px;
@@ -705,6 +745,15 @@ export default {
         border: none;
         outline: none;
         cursor: pointer;
+        // width: 520px;
+        // height: 60px;
+        // font-size: 24px;
+        // background: #1ec7d5;
+        // border-radius: 12px;
+        // color: #ffffff;
+        // border: none;
+        // outline: none;
+        // cursor: pointer;
       }
       // .cancelBtn:hover {
       //   background: #1ec7d5;
@@ -811,9 +860,12 @@ export default {
           width: 163px;
           height: 40px;
           font-size: 14px;
+        }
+        .button1 {
+          font-size: 14px;
           margin: auto;
-          margin-top: 70px;
-          margin-bottom: 22px;
+          margin-top: 25px;
+          margin-bottom: 9px;
         }
         .fontStyle {
           .fontLength {
@@ -890,9 +942,15 @@ export default {
           color: #ffffff;
         }
         .cancelBtn {
+          // width: 250px;
+          // height: 30px;
+          // background: #cccccc;
+          // border-radius: 6px;
+          // font-size: 12px;
           width: 250px;
           height: 30px;
-          background: #cccccc;
+          font-size: 24px;
+          background: #1ec7d5;
           border-radius: 6px;
           font-size: 12px;
         }

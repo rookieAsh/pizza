@@ -3,15 +3,15 @@
     <el-aside :width="isCollapse ? '64px' : '280px'" class="aside">
       <div class="asideImg" v-show="!isCollapse">
         <img src="../assets/image/home/logo.png" />
-        <div class="asideMark">Zooswap</div>
+        <div class="asideMark">Pizswap</div>
       </div>
       <div class="asideImg1" v-show="isCollapse"></div>
       <el-menu
         active-text-color="#4dbcff"
-        unique-opened
         :default-active="this.$route.path"
         :collapse="isCollapse"
         :collapse-transition="false"
+        unique-opened
         router
         class="elmenu"
       >
@@ -58,7 +58,7 @@
           id="copy1"
           style="width: 100px; word-wrap: break-word"
         >
-          http://zooswap.club/#/farm?{{ this.addressAll }}
+          http://pizswap.com/#/farm?{{ this.addressAll }}
         </div>
       </el-menu>
     </el-aside>
@@ -69,7 +69,7 @@
             <div class="headerImg" v-show="isCollapse">
               <img src="../assets/image/home/logo.png" alt="" />
             </div>
-            <div class="headerTitle" v-show="isCollapse">Zooswap</div>
+            <div class="headerTitle" v-show="isCollapse">Pizswap</div>
             <div class="headerLeft" @click="isCollapseClick">
               <img
                 v-if="!isCollapse"
@@ -268,7 +268,7 @@
                   :key="key"
                   class="elmenuitem"
                 >
-                  <a href="http://zooswap.club/pizswap/#/swap">
+                  <a href="http://pizswap.com/pizswap/#/swap">
                     <span class="spanSwap">{{ items.authName }}</span></a
                   >
                 </el-menu-item>
@@ -285,12 +285,12 @@
             </template>
             <div class="invite" v-if="userState != 0">
               <img src="../assets/image/home/invite.png" alt="" />
-              <span v-show="!isCollapse" @click="inviteBtn2('copy2')">{{
+              <span v-if="userState != 0" @click="inviteBtn2('copy2')">{{
                 $t('lang.inviteConnect')
               }}</span>
             </div>
             <div class="yaoqing1" id="copy2">
-              http://zooswap.club/#/farm?{{ this.addressAll }}
+              http://pizswap.com/#/farm?{{ this.addressAll }}
             </div>
           </van-popup>
         </el-menu>
@@ -340,25 +340,30 @@ export default {
   created() {
     this.$store.commit('instance')
     this.dataRefreh()
-    this.getStatsMsg()
+    // this.hendleWalletBtn()
+    // this.getStatsMsg()
     // setTimeout(function chechAuth() {
     //   console.log(ethereum.selectedAddress)
     //   if (ethereum.selectedAddress === null) setTimeout(chechAuth, 200)
     //   else this.addressAll = ethereum.selectedAddress
     // }, 200)
   },
-
+  mounted() {
+    this.dataRefreh()
+    this.hendleWalletBtn()
+    this.getStatsMsg()
+  },
   methods: {
     //定时器
     dataRefreh() {
       // 计时器正在进行中，退出函数
-      if (this.intervalId != null) {
+      if (this.intervalId !== null) {
         return
       }
       // 计时器为空，操作
       this.intervalId = setInterval(() => {
-        this.hendleWalletBtn() //加载数据函数
         this.getStatsMsg()
+        this.hendleWalletBtn() //加载数据函数
       }, 1000)
     },
     // 停止定时器
@@ -417,11 +422,11 @@ export default {
   },
   watch: {
     // address: {
-    // handler(newVal, objVal) {
-    //   if (newVal != objVal) {
-    //     this.hendleWalletBtn()
-    //   }
-    // },
+    //   handler(newVal, objVal) {
+    //     if (newVal != objVal) {
+    //       this.getStatsMsg()
+    //     }
+    //   },
     // },
   },
   computed: {

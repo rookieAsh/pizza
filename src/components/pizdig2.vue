@@ -1,20 +1,20 @@
 <template>
   <div class="container">
-    <div class="titleMsg">BUSD-ZOO/LP {{ $t('lang.pledgeToDig') }}</div>
+    <div class="titleMsg">BUSD-PIZ/LP {{ $t('lang.pledgeToDig') }}</div>
     <div class="titleNav">
-      {{ $t('lang.deposit') }} BUSD-ZOO {{ $t('lang.obtain') }} ZOO
+      {{ $t('lang.deposit') }} BUSD-PIZ {{ $t('lang.obtain') }} PIZ
     </div>
     <div class="content">
       <div class="left">
         <div class="box1">{{ number1 }}</div>
-        <div class="box2">{{ $t('lang.obtain') }} ZOO</div>
+        <div class="box2">{{ $t('lang.obtain') }} PIZ</div>
         <div class="box3">
           <button @click="getDate()">{{ $t('lang.obtain') }}</button>
         </div>
       </div>
       <div class="right">
         <div class="box1">{{ number2 }}</div>
-        <div class="box2">BUSD-ZOO {{ $t('lang.pledged') }}</div>
+        <div class="box2">BUSD-PIZ {{ $t('lang.pledged') }}</div>
         <div class="box3">
           <button @click="handlePizdig()">{{ $t('lang.pledge') }}</button>
         </div>
@@ -32,21 +32,22 @@
         <div class="title2">{{ number3 }} LP {{ $t('lang.available') }}</div>
 
         <div class="inputMag">
-          <div class="pizmsg">BUSD-ZOO</div>
+          <div class="pizmsg">BUSD-PIZ</div>
           <input class="pizInput" v-model="pizNumber" placeholder="" />
         </div>
         <div class="title3" @click="getMaxNumber()">
           {{ $t('lang.maximum') }}
         </div>
         <div class="buttonBox">
-          <button
+          <el-button
+            :loading="isLoading"
             class="confimBtn"
             @click="confimBtn()"
             :disabled="approveDis"
             :class="{ confimBtnFlag: approveDis }"
           >
             {{ $t('lang.authorization') }}
-          </button>
+          </el-button>
           <button
             class="cancelBtn"
             @click="cancelBtn()"
@@ -58,18 +59,19 @@
       </div>
     </el-dialog>
     <!-- 加载框 -->
-    <el-dialog :visible.sync="fullscreenLoading" center>
+    <!-- <el-dialog :visible.sync="fullscreenLoading" center>
       <div class="loading">
         <circle2></circle2>
         <div class="loadingText">loading...</div>
       </div>
-    </el-dialog>
+    </el-dialog> -->
   </div>
 </template>
 
 <script>
 import fun from '../mixins/common.js'
 import { Circle2 } from 'vue-loading-spinner'
+import { BigNumber } from 'bignumber.js'
 
 export default {
   mixins: [fun],
@@ -78,7 +80,7 @@ export default {
   },
   data() {
     return {
-      fullscreenLoading: false, //置灰开关
+      isLoading: false, //加载
       flag: false,
       approveDis: false,
       dialogVisible: false,
@@ -188,7 +190,8 @@ export default {
 
     // 授权approve 传进去的数字转16进制
     async confimBtn() {
-      this.fullscreenLoading = true
+      // this.fullscreenLoading = true
+      this.isLoading = true
       const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
       const contractInstance = this.contractWebEth(this.abi1, this.address1)
@@ -201,7 +204,9 @@ export default {
       await contractInstance.methods
         .approve(
           this.address,
-          web3.utils.fromDecimal(this.pizNumber * Math.pow(10, this.precision))
+          web3.utils.numberToHex(
+            BigNumber(this.pizNumber * Math.pow(10, this.precision))
+          )
         )
         .send({ from: newAccounts })
         .then((res) => {
@@ -209,30 +214,34 @@ export default {
           if (res.status == true) {
             this.$message.success(this.$t('lang.authorizationSuc'))
             this.flag = true
-            this.fullscreenLoading = false
+            this.isLoading = false
             this.approveDis = true
           }
         })
         .catch((err) => {
           console.log(err)
           this.$message.error(this.$t('lang.userReject'))
-          this.fullscreenLoading = false
+          // this.fullscreenLoading = false
+          this.isLoading = false
         })
     },
     // 质押stake 传进去的数字转16进制
     async cancelBtn() {
-      if (!this.flag) {
-        this.$message.warning(this.$t('lang.pleaseAuthorize'))
-        return
-      }
+      // if (!this.flag) {
+      //   this.$message.warning(this.$t('lang.pleaseAuthorize'))
+      //   return
+      // }
       // this.fullscreenLoading = true
+      this.dialogVisible = false
       const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
       const contractInstance = this.contractWebEth(this.abi, this.address)
       await contractInstance.methods
         .deposit(
           this.pid,
-          web3.utils.fromDecimal(this.pizNumber * Math.pow(10, this.precision))
+          web3.utils.numberToHex(
+            BigNumber(this.pizNumber * Math.pow(10, this.precision))
+          )
         )
         .send({ from: newAccounts })
         .then((res) => {
@@ -525,6 +534,7 @@ export default {
       .confimBtn {
         width: 520px;
         height: 60px;
+        display: block;
         margin: 40px 0 20px 0;
         background: #1ec7d5;
         border-radius: 12px;
@@ -537,6 +547,7 @@ export default {
       .confimBtnFlag {
         width: 520px;
         height: 60px;
+        display: none;
         font-size: 24px;
         background: #cccccc;
         border-radius: 12px;
@@ -548,6 +559,7 @@ export default {
       .cancelBtn {
         width: 520px;
         height: 60px;
+        display: none;
         font-size: 24px;
         background: #cccccc;
         border-radius: 12px;
@@ -559,6 +571,7 @@ export default {
       .cancelBtnFlag {
         width: 520px;
         height: 60px;
+        display: block;
         font-size: 24px;
         background: #1ec7d5;
         border-radius: 12px;
@@ -716,6 +729,7 @@ export default {
         .confimBtn {
           width: 250px;
           height: 30px;
+          display: block;
           background: #1ec7d5;
           border-radius: 6px;
           font-size: 12px;
@@ -724,6 +738,7 @@ export default {
         .confimBtnFlag {
           width: 250px;
           height: 30px;
+          display: none;
           border-radius: 6px;
           font-size: 12px;
           background: #cccccc;
@@ -732,6 +747,7 @@ export default {
         .cancelBtn {
           width: 250px;
           height: 30px;
+          display: none;
           background: #cccccc;
           border-radius: 6px;
           font-size: 12px;
@@ -739,6 +755,7 @@ export default {
         .cancelBtnFlag {
           width: 250px;
           height: 30px;
+          display: block;
           border-radius: 6px;
           font-size: 12px;
           background: #1ec7d5;

@@ -5,7 +5,7 @@ module.exports = {
   // assetsPublicPath: './',
   devServer: {
     port: 8080,
-    host: '192.168.2.16',
+    host: '192.168.2.4',
   },
 
   configureWebpack: {

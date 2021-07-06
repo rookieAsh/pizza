@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="content">
+      <!-- <el-button @click="handleHome" type="primary">我首页</el-button> -->
       <div class="title">
         <div class="titleMsg">{{ $t('lang.farm') }}</div>
         <p class="titleNav">
@@ -12,10 +13,10 @@
           <div class="img1">
             <img src="../assets/image/farm/img4.png" alt="" />
           </div>
-          <div class="tab">ZOO {{ $t('lang.pledgeToDig') }}</div>
+          <div class="tab">PIZ {{ $t('lang.pledgeToDig') }}</div>
           <div class="msg">
-            <div>{{ $t('lang.deposit') }}ZOO</div>
-            <div>{{ $t('lang.obtain') }}ZOO</div>
+            <div>{{ $t('lang.deposit') }}PIZ</div>
+            <div>{{ $t('lang.obtain') }}PIZ</div>
           </div>
           <div>
             <button @click="handlePizdig(0)">{{ $t('lang.choose') }}</button>
@@ -24,17 +25,17 @@
             <div class="div1">
               {{ $t('lang.annualInterestRate') }}：{{ annualInterestRate0 }}
             </div>
-            <div class="div2">{{ $t('lang.dailyProduction') }}：35000 ZOO</div>
+            <div class="div2">{{ $t('lang.dailyProduction') }}：35000 PIZ</div>
           </div>
         </div>
         <div class="submenu">
           <div class="img">
             <img src="../assets/image/farm/img1.png" alt="" />
           </div>
-          <div class="tab">USDT-ZOO/LP {{ $t('lang.pledgeToDig') }}</div>
+          <div class="tab">USDT-PIZ/LP {{ $t('lang.pledgeToDig') }}</div>
           <div class="msg">
-            <div>{{ $t('lang.deposit') }}USDT-ZOO</div>
-            <div>{{ $t('lang.obtain') }}ZOO</div>
+            <div>{{ $t('lang.deposit') }}USDT-PIZ</div>
+            <div>{{ $t('lang.obtain') }}PIZ</div>
           </div>
           <div>
             <button @click="handlePizdig1(1)">{{ $t('lang.choose') }}</button>
@@ -43,17 +44,17 @@
             <div class="div1">
               {{ $t('lang.annualInterestRate') }}：{{ annualInterestRate1 }}
             </div>
-            <div class="div2">{{ $t('lang.dailyProduction') }}：35000 ZOO</div>
+            <div class="div2">{{ $t('lang.dailyProduction') }}：35000 PIZ</div>
           </div>
         </div>
         <div class="submenu">
           <div class="img">
             <img src="../assets/image/farm/img3.png" alt="" />
           </div>
-          <div class="tab">BUSD-ZOO/LP {{ $t('lang.pledgeToDig') }}</div>
+          <div class="tab">BUSD-PIZ/LP {{ $t('lang.pledgeToDig') }}</div>
           <div class="msg">
-            <div>{{ $t('lang.deposit') }}BUSD-ZOO</div>
-            <div>{{ $t('lang.obtain') }}ZOO</div>
+            <div>{{ $t('lang.deposit') }}BUSD-PIZ</div>
+            <div>{{ $t('lang.obtain') }}PIZ</div>
           </div>
           <div>
             <button @click="handlePizdig2(2)">{{ $t('lang.choose') }}</button>
@@ -62,17 +63,17 @@
             <div class="div1">
               {{ $t('lang.annualInterestRate') }}：{{ annualInterestRate2 }}
             </div>
-            <div class="div2">{{ $t('lang.dailyProduction') }}：35000 ZOO</div>
+            <div class="div2">{{ $t('lang.dailyProduction') }}：35000 PIZ</div>
           </div>
         </div>
         <div class="submenu">
           <div class="img">
             <img src="../assets/image/farm/img2.png" alt="" />
           </div>
-          <div class="tab">BNB-ZOO/LP {{ $t('lang.pledgeToDig') }}</div>
+          <div class="tab">BNB-PIZ/LP {{ $t('lang.pledgeToDig') }}</div>
           <div class="msg">
-            <div>{{ $t('lang.deposit') }}BNB-ZOO</div>
-            <div>{{ $t('lang.obtain') }}ZOO</div>
+            <div>{{ $t('lang.deposit') }}BNB-PIZ</div>
+            <div>{{ $t('lang.obtain') }}PIZ</div>
           </div>
           <div>
             <button @click="handlePizdig3(3)">{{ $t('lang.choose') }}</button>
@@ -81,7 +82,7 @@
             <div class="div1">
               {{ $t('lang.annualInterestRate') }}：{{ annualInterestRate3 }}
             </div>
-            <div class="div2">{{ $t('lang.dailyProduction') }}：35000 ZOO</div>
+            <div class="div2">{{ $t('lang.dailyProduction') }}：35000 PIZ</div>
           </div>
         </div>
       </div>
@@ -144,12 +145,16 @@ export default {
     this.getAnnualInterestRate3()
   },
   mounted() {
+    this.getStatsMsg()
     this.inviter = location.hash.slice(7)
     if (this.inviter != '') {
       window.sessionStorage.setItem('setinviter', this.inviter)
     }
   },
   methods: {
+    handleHome() {
+      this.$router.push('./home')
+    },
     handlePizdig(pid) {
       // this.$router.push({path: ' 路由 ', query: {key: value}})
       // this.$router.push('/pizdig')
@@ -176,7 +181,6 @@ export default {
           console.log(res.stats)
           this.raddress = res.referer
           this.state = res.usdtstats[0]
-          console.log('this.state', this.state)
           if (this.state != 0) {
             this.flag = true
           }
@@ -191,7 +195,6 @@ export default {
         console.log('MetaMask is installed!')
       }
       const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
-      console.log(accounts)
       this.addressAll = accounts[0]
     },
 
@@ -200,17 +203,13 @@ export default {
       this.inviter = window.sessionStorage.getItem('setinviter')
       const accounts = await this.getAccounts()
       const newAccounts = accounts[0]
-      console.log(
-        this.address,
-        '0000000000000000000000000000000000000000000000000'
-      )
       const contractInstance = this.contractWebEth(this.abi, this.address)
       await contractInstance.methods
         .register(this.inviter)
         .send({ from: newAccounts })
         .then((res) => {
           this.$message.success(this.$t('lang.RegisteredSuc'))
-          console.log(res)
+          this.$router.push('/home')
         })
         .catch((err) => {
           console.log('errerr', err)
@@ -260,7 +259,7 @@ export default {
       } else {
         const annual = BigNumber(35000 * 365 * Math.pow(10, this.precisionPiz))
         await contractInstanceCastle.methods
-          .getAmount(web3.utils.toHex(annual), this.addressLpToken0)
+          .getAmount(web3.utils.numberToHex(annual), this.addressLpToken0)
           .call()
           .then((res) => {
             this.annualInterestRate0 = (res * 100) / this.balanceToPiz0
@@ -315,7 +314,7 @@ export default {
       } else {
         const annual = BigNumber(35000 * 365 * Math.pow(10, this.precisionPiz))
         await contractInstanceCastle.methods
-          .getAmount(web3.utils.toHex(annual), this.addressLpToken1)
+          .getAmount(web3.utils.numberToHex(annual), this.addressLpToken1)
           .call()
           .then((res) => {
             this.annualInterestRate1 = (res * 100) / this.balanceToPiz1
@@ -381,7 +380,7 @@ export default {
       } else {
         const annual = BigNumber(35000 * 365 * Math.pow(10, this.precisionPiz))
         await contractInstanceCastle.methods
-          .getAmount(web3.utils.toHex(annual), this.addressLpToken2)
+          .getAmount(web3.utils.numberToHex(annual), this.addressLpToken2)
           .call()
           .then((res) => {
             this.annualInterestRate2 = (res * 100) / this.balanceToPiz2
@@ -441,7 +440,7 @@ export default {
       } else {
         const annual = BigNumber(35000 * 365 * Math.pow(10, this.precisionPiz))
         await contractInstanceCastle.methods
-          .getAmount(web3.utils.toHex(annual), this.addressLpToken3)
+          .getAmount(web3.utils.numberToHex(annual), this.addressLpToken3)
           .call()
           .then((res) => {
             this.annualInterestRate3 = (res * 100) / this.balanceToPiz3

@@ -1,6 +1,9 @@
 export default {
   data() {
-    return {}
+    return {
+      accounts: '',
+      contractInstance: '',
+    }
   },
   created() {},
   methods: {
@@ -18,5 +21,7 @@ export default {
     },
   },
   compute: {},
-  watch: {},
+  watch: {
+    accounts() {},
+  },
 }
